@@ -554,6 +554,7 @@ public class RewardScene extends UIScene {
                     String cardName = reward.getCard().getCardName();
                     System.out.println("FORGE_ARCHIPELAGO: CARD REWARD DETECTED: " + cardName);
                 }
+                // Todo: Check other reward types and handle them accordingly (Gold/Shards/Items)
             }
 
             boolean skipCard = false;
