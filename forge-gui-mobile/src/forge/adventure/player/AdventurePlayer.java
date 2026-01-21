@@ -13,6 +13,7 @@ import forge.adventure.data.*;
 import forge.adventure.pointofintrest.PointOfInterestChanges;
 import forge.adventure.scene.AdventureDeckEditor;
 import forge.adventure.scene.DeckEditScene;
+import forge.adventure.stage.GameHUD;
 import forge.adventure.stage.GameStage;
 import forge.adventure.stage.MapStage;
 import forge.adventure.stage.WorldStage;
@@ -884,6 +885,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
     }
 
     public void addReward(Reward reward) {
+        String forgeNotification = "FORGE_ARCHIPELAGO: ";
         switch (reward.getType()) {
             case Card:
                 cards.add(reward.getCard());
@@ -892,33 +894,38 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
                     autoSellCards.add(reward.getCard());
                     refreshEditor();
                 }
-                System.out.println("FORGE_ARCHIPELAGO: CARD REWARD DETECTED: " + reward.getCard().getCardName());
+                forgeNotification += "CARD REWARD DETECTED: " + reward.getCard().getCardName();
                 break;
             case Gold:
                 addGold(reward.getCount());
-                System.out.println("FORGE_ARCHIPELAGO: GOLD REWARD DETECTED: +" + reward.getCount());
+                forgeNotification += "GOLD REWARD DETECTED: +" + reward.getCount();
                 break;
             case Item:
                 if (reward.getItem() != null) {
                     addItem(reward.getItem().name);
-                    System.out.println("FORGE_ARCHIPELAGO: ITEM REWARD DETECTED: " + reward.getItem().name);
+                    forgeNotification += "ITEM REWARD DETECTED: " + reward.getItem().name;
                 }
                 break;
             case CardPack:
                 if (reward.getDeck() != null) {
                     boostersOwned.add(reward.getDeck());
-                    System.out.println("FORGE_ARCHIPELAGO: CARD PACK REWARD DETECTED: " + reward.getDeck().getName());
+                    forgeNotification += "CARD PACK REWARD DETECTED: " + reward.getDeck().getName();
                 }
                 break;
             case Life:
                 addMaxLife(reward.getCount());
-                System.out.println("FORGE_ARCHIPELAGO: MAX LIFE REWARD DETECTED: +" + reward.getCount());
+                forgeNotification += "MAX LIFE REWARD DETECTED: +" + reward.getCount();
                 break;
             case Shards:
                 addShards(reward.getCount());
-                System.out.println("FORGE_ARCHIPELAGO: SHARD REWARD DETECTED: +" + reward.getCount());
+                forgeNotification += "SHARD REWARD DETECTED: +" + reward.getCount();
                 break;
+            default:
+                return;
         }
+        System.out.println(forgeNotification);
+        // Todo: Remove this so it only shows important notifications but this is a good example of how to summon a dialog.
+        GameHUD.getInstance().addNotification(forgeNotification, 0.5f);
     }
 
     private void refreshEditor() {

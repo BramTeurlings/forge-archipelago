@@ -978,7 +978,7 @@ public class GameHUD extends Stage {
         flicker(WorldStage.getInstance().getPlayerSprite());
     }
 
-    public void addNotification(String text) {
+    public void addNotification(String text, float durationMult) {
         Action preconfigureNotification = new Action() {
             @Override
             public boolean act(float delta) {
@@ -1004,19 +1004,23 @@ public class GameHUD extends Stage {
 
         if (Forge.isLandscapeMode()) {
             newNotification = Actions.after(Actions.sequence(preconfigureNotification,
-                    Actions.moveTo(5, 0, 2f),
-                    Actions.delay(10f),
-                    Actions.alpha(0f, 3f),
+                    Actions.moveTo(5, 0, 2f*durationMult),
+                    Actions.delay(10f*durationMult),
+                    Actions.alpha(0f, 3f*durationMult),
                     Actions.sizeTo(0, 0)));
         } else {
             newNotification = Actions.after(Actions.sequence(preconfigureNotification,
-                    Actions.moveToAligned(5, getHeight(), Align.topLeft, 2f),
-                    Actions.delay(10f),
-                    Actions.alpha(0f, 3f),
+                    Actions.moveToAligned(5, getHeight(), Align.topLeft, 2f*durationMult),
+                    Actions.delay(10f*durationMult),
+                    Actions.alpha(0f, 3f*durationMult),
                     Actions.sizeTo(0, 0)));
         }
 
         notificationPane.addAction(newNotification);
+    }
+
+    public void addNotification(String text) {
+        addNotification(text, 1f);
     }
 
     public void clearNotifications() {
