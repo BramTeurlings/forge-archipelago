@@ -925,7 +925,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
         }
         System.out.println(forgeNotification);
         // Todo: Remove this so it only shows important notifications but this is a good example of how to summon a dialog.
-        GameHUD.getInstance().addNotification(forgeNotification, 0.5f);
+        GameHUD.getInstance().addNotification(forgeNotification, 1f, 4f, 1f);
     }
 
     private void refreshEditor() {
