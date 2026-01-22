@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import forge.Forge;
 import com.badlogic.gdx.Gdx;
 import forge.OverlayText;
+import forge.adventure.data.ArchipelagoData;
 import forge.adventure.data.DifficultyData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.pointofintrest.PointOfInterest;
@@ -37,6 +38,7 @@ public class WorldSave {
     private final AdventurePlayer player = new AdventurePlayer();
     private final World world = new World();
     private final PointOfInterestChanges.Map pointOfInterestChanges = new PointOfInterestChanges.Map();
+    private final ArchipelagoData archipelagoData = new ArchipelagoData();
 
 
     private final SignalList onLoadList = new SignalList();
@@ -91,6 +93,7 @@ public class WorldSave {
                 try {
                     currentSave.world.load(mainData.readSubData("world"));
                     currentSave.pointOfInterestChanges.load(mainData.readSubData("pointOfInterestChanges"));
+                    currentSave.archipelagoData.load(mainData.readSubData("archipelago"));
                     WorldStage.getInstance().load(mainData.readSubData("worldStage"));
 
                 } catch (Exception e) {
@@ -189,6 +192,7 @@ public class WorldSave {
                 SaveFileData player = currentSave.player.save();
                 SaveFileData world = currentSave.world.save();
                 SaveFileData worldStage = WorldStage.getInstance().save();
+                SaveFileData archipelago = ArchipelagoData.getInstance().save();
                 SaveFileData poiChanges = currentSave.pointOfInterestChanges.save();
 
                 String message = getExceptionMessage(player, world, worldStage, poiChanges);
@@ -205,6 +209,7 @@ public class WorldSave {
                 mainData.store("world", world);
                 mainData.store("worldStage", worldStage);
                 mainData.store("pointOfInterestChanges", poiChanges);
+                mainData.store("archipelago", archipelago);
 
                 if (mainData.readString("IOException") != null) {
                     oos.close();
