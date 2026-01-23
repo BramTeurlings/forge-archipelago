@@ -4,18 +4,19 @@ import forge.adventure.scene.TileMapScene;
 import forge.adventure.util.SaveFileContent;
 import forge.adventure.util.SaveFileData;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 // This class will keep track of data relevant for the Archipelago implementation
 // Persists and loads data inside/from the user's save file.
 // Todo: Persist (mini-)boss encounter victories.
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
-    private final Map<String, Integer> completedTownInnEvents = new HashMap<>();
-    private final Map<String, Integer> cardsEarnedByRarity = new HashMap<>();
-    private final Map<String, Integer> itemsGainedById = new HashMap<>();
-    private final Map<String, Integer> packsEarnedBySet = new HashMap<>();
+    private final Map<String, Long> completedTownInnEvents = new HashMap<>();
+    private final Map<String, Long> cardsEarnedByRarity = new HashMap<>();
+    private final Map<String, Long> itemsGainedById = new HashMap<>();
+    private final Map<String, Long> packsEarnedBySet = new HashMap<>();
+    private final Set<String> bossesDefeatedByName = new HashSet<>();
+    private final Set<String> miniBossesDefeatedByName = new HashSet<>();
     private int totalGoldEarned = 0;
     private int totalExtraMaxLifeEarned = 0;
     private int totalShardsEarned = 0;
@@ -32,12 +33,12 @@ public class ArchipelagoData implements SaveFileContent {
 
     public void addCompletedTownInnEvents() {
         String townName = TileMapScene.instance().rootPoint.getDisplayName();
-        completedTownInnEvents.merge(townName, 1, Integer::sum);
+        completedTownInnEvents.merge(townName, 1L, Long::sum);
         System.out.println("FORGE_ARCHIPELAGO: INN EVENT COMPLETION DETECTED: " + townName + " - " + completedTownInnEvents.get(townName));
     }
 
     public void addCardByRarity(String rarity) {
-        cardsEarnedByRarity.merge(rarity, 1, Integer::sum);
+        cardsEarnedByRarity.merge(rarity, 1L, Long::sum);
     }
 
     public void addGold(int amount) {
@@ -45,11 +46,11 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public void addItem(String longId) {
-        itemsGainedById.merge(longId, 1, Integer::sum);
+        itemsGainedById.merge(longId, 1L, Long::sum);
     }
 
     public void addPack(String setName) {
-        packsEarnedBySet.merge(setName, 1, Integer::sum);
+        packsEarnedBySet.merge(setName, 1L, Long::sum);
     }
 
     public void addMaxLife(int amount) {
@@ -60,8 +61,30 @@ public class ArchipelagoData implements SaveFileContent {
         totalShardsEarned += amount;
     }
 
+    // Note that the name of a boss is not unique so we'll need to filter from all enemies which have a `boss` value of `true`.
+    // Returns `true` if the boss was not already defeated before.
+    public boolean addMiniBossDefeated(String miniBossName) {
+        return miniBossesDefeatedByName.add(miniBossName);
+    }
+    public boolean addBossDefeated(String bossName) {
+        return bossesDefeatedByName.add(bossName);
+    }
+
     // Helper functions for saving and loading
-    private static void saveStringIntMap(SaveFileData parent, String prefix, Map<String, Integer> map) {
+    private static void saveStringSet(SaveFileData parent, String key, Set<String> set) {
+        parent.storeObject(key, set.toArray(new String[0]));
+    }
+
+    private static void loadStringSet(SaveFileData parent, String key, Set<String> set) {
+        set.clear();
+
+        if (!parent.containsKey(key)) return;
+
+        String[] values = (String[]) parent.readObject(key);
+        Collections.addAll(set, values);
+    }
+
+    private static void saveStringLongMap(SaveFileData parent, String prefix, Map<String, Long> map) {
         String[] keys = map.keySet().toArray(new String[0]);
         parent.storeObject(prefix + "_keys", keys);
 
@@ -75,7 +98,7 @@ public class ArchipelagoData implements SaveFileContent {
         }
     }
 
-    private static void loadStringIntMap(SaveFileData parent, String prefix, Map<String, Integer> map) {
+    private static void loadStringLongMap(SaveFileData parent, String prefix, Map<String, Long> map) {
         map.clear();
 
         if (!parent.containsKey(prefix + "_keys")) return;
@@ -85,7 +108,7 @@ public class ArchipelagoData implements SaveFileContent {
         for (int i = 0; i < keys.length; i++) {
             SaveFileData valueData = parent.readSubData(prefix + "_value_" + i);
             if (valueData != null) {
-                map.put(keys[i], valueData.readInt("value"));
+                map.put(keys[i], valueData.readLong("value"));
             }
         }
     }
@@ -96,10 +119,12 @@ public class ArchipelagoData implements SaveFileContent {
             return;
         }
 
-        loadStringIntMap(data, "townEvents", completedTownInnEvents);
-        loadStringIntMap(data, "cardsByRarity", cardsEarnedByRarity);
-        loadStringIntMap(data, "items", itemsGainedById);
-        loadStringIntMap(data, "packs", packsEarnedBySet);
+        loadStringLongMap(data, "townEvents", completedTownInnEvents);
+        loadStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
+        loadStringLongMap(data, "items", itemsGainedById);
+        loadStringLongMap(data, "packs", packsEarnedBySet);
+        loadStringSet(data, "bossesDefeated", bossesDefeatedByName);
+        loadStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
 
         totalGoldEarned = data.containsKey("totalGold") ? data.readInt("totalGold") : 0;
         totalExtraMaxLifeEarned = data.containsKey("extraLife") ? data.readInt("extraLife") : 0;
@@ -110,10 +135,12 @@ public class ArchipelagoData implements SaveFileContent {
     public SaveFileData save() {
         SaveFileData data = new SaveFileData();
 
-        saveStringIntMap(data, "townEvents", completedTownInnEvents);
-        saveStringIntMap(data, "cardsByRarity", cardsEarnedByRarity);
-        saveStringIntMap(data, "items", itemsGainedById);
-        saveStringIntMap(data, "packs", packsEarnedBySet);
+        saveStringLongMap(data, "townEvents", completedTownInnEvents);
+        saveStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
+        saveStringLongMap(data, "items", itemsGainedById);
+        saveStringLongMap(data, "packs", packsEarnedBySet);
+        saveStringSet(data, "bossesDefeated", bossesDefeatedByName);
+        saveStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
 
         data.store("totalGold", totalGoldEarned);
         data.store("extraLife", totalExtraMaxLifeEarned);
