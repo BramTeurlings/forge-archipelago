@@ -886,6 +886,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
 
     public void addReward(Reward reward) {
         String forgeNotification = "FORGE_ARCHIPELAGO: ";
+        ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
         switch (reward.getType()) {
             case Card:
                 cards.add(reward.getCard());
@@ -894,30 +895,37 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
                     autoSellCards.add(reward.getCard());
                     refreshEditor();
                 }
+                archipelagoData.addCardByRarity(reward.getCard().getRarity().toString());
                 forgeNotification += "CARD REWARD DETECTED: " + reward.getCard().getCardName();
                 break;
             case Gold:
                 addGold(reward.getCount());
+                archipelagoData.addGold(reward.getCount());
                 forgeNotification += "GOLD REWARD DETECTED: +" + reward.getCount();
                 break;
             case Item:
                 if (reward.getItem() != null) {
                     addItem(reward.getItem().name);
+                    archipelagoData.addItem(reward.getItem().longID.toString());
                     forgeNotification += "ITEM REWARD DETECTED: " + reward.getItem().name;
                 }
                 break;
             case CardPack:
                 if (reward.getDeck() != null) {
                     boostersOwned.add(reward.getDeck());
+                    // Todo: This stores the name of booster pack, ensure this is all we need and not something like the set ID or tag.
+                    archipelagoData.addPack(reward.getDeck().getName());
                     forgeNotification += "CARD PACK REWARD DETECTED: " + reward.getDeck().getName();
                 }
                 break;
             case Life:
                 addMaxLife(reward.getCount());
+                archipelagoData.addMaxLife(reward.getCount());
                 forgeNotification += "MAX LIFE REWARD DETECTED: +" + reward.getCount();
                 break;
             case Shards:
                 addShards(reward.getCount());
+                archipelagoData.addShards(reward.getCount());
                 forgeNotification += "SHARD REWARD DETECTED: +" + reward.getCount();
                 break;
             default:

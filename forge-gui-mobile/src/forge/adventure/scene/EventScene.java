@@ -578,7 +578,7 @@ public class EventScene extends MenuScene implements IAfterMatch {
 
     public void finishEvent() {
         currentEvent.eventStatus = AdventureEventController.EventStatus.Completed;
-        ArchipelagoData.getInstance().incrementCompletedTownInnEvents();
+        ArchipelagoData.getInstance().addCompletedTownInnEvents();
     }
 
     public void loadMetaDraft() {
