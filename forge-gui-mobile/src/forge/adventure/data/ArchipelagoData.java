@@ -51,23 +51,28 @@ public class ArchipelagoData implements SaveFileContent {
 
     public void addGold(int amount) {
         totalGoldEarned += amount;
+        System.out.println("FORGE_ARCHIPELAGO: ITEM REWARD DETECTED: " + amount);
     }
 
     // Due to MapDialog.SetEffects() using just a name string to add items to the player's inventory, it's likely that the name is unique.
     public void addItem(String itemName) {
         itemsGainedById.merge(itemName, 1L, Long::sum);
+        System.out.println("FORGE_ARCHIPELAGO: ITEM REWARD DETECTED: " + itemName);
     }
 
-    public void addPack(String setName) {
-        packsEarnedBySet.merge(setName, 1L, Long::sum);
+    public void addPack(String boosterPackName) {
+        packsEarnedBySet.merge(boosterPackName, 1L, Long::sum);
+        System.out.println("FORGE_ARCHIPELAGO: CARD PACK REWARD DETECTED: +" + boosterPackName);
     }
 
     public void addMaxLife(int amount) {
         totalExtraMaxLifeEarned += amount;
+        System.out.println("FORGE_ARCHIPELAGO: MAX LIFE REWARD DETECTED: +" + amount);
     }
 
     public void addShards(int amount) {
         totalShardsEarned += amount;
+        System.out.println("FORGE_ARCHIPELAGO: SHARD REWARD DETECTED: +" + amount);
     }
 
     // Note that the name of a boss is not unique so we'll need to filter from all enemies which have a `boss` value of `true`.
