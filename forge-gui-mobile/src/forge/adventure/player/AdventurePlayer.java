@@ -906,7 +906,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
             case Item:
                 if (reward.getItem() != null) {
                     addItem(reward.getItem().name);
-                    archipelagoData.addItem(reward.getItem().longID.toString());
+                    archipelagoData.addItem(reward.getItem().getName());
                     forgeNotification += "ITEM REWARD DETECTED: " + reward.getItem().name;
                 }
                 break;

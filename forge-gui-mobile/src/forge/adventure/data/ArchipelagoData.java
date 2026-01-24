@@ -1,6 +1,7 @@
 package forge.adventure.data;
 
 import forge.adventure.scene.TileMapScene;
+import forge.adventure.util.AdventureQuestEvent;
 import forge.adventure.util.SaveFileContent;
 import forge.adventure.util.SaveFileData;
 
@@ -12,6 +13,7 @@ import java.util.*;
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
     private final Map<String, Long> completedTownInnEvents = new HashMap<>();
+    private final Map<String, Long> completedTownQuests = new HashMap<>();
     private final Map<String, Long> cardsEarnedByRarity = new HashMap<>();
     private final Map<String, Long> itemsGainedById = new HashMap<>();
     private final Map<String, Long> packsEarnedBySet = new HashMap<>();
@@ -37,6 +39,12 @@ public class ArchipelagoData implements SaveFileContent {
         System.out.println("FORGE_ARCHIPELAGO: INN EVENT COMPLETION DETECTED: " + townName + " - " + completedTownInnEvents.get(townName));
     }
 
+    public void addCompletedQuests(AdventureQuestEvent event) {
+        String townName = event.poi.getDisplayName();
+        completedTownQuests.merge(townName, 1L, Long::sum);
+        System.out.println("FORGE_ARCHIPELAGO: QUEST COMPLETION DETECTED: " + townName + " - " + completedTownQuests.get(townName));
+    }
+
     public void addCardByRarity(String rarity) {
         cardsEarnedByRarity.merge(rarity, 1L, Long::sum);
     }
@@ -45,8 +53,9 @@ public class ArchipelagoData implements SaveFileContent {
         totalGoldEarned += amount;
     }
 
-    public void addItem(String longId) {
-        itemsGainedById.merge(longId, 1L, Long::sum);
+    // Due to MapDialog.SetEffects() using just a name string to add items to the player's inventory, it's likely that the name is unique.
+    public void addItem(String itemName) {
+        itemsGainedById.merge(itemName, 1L, Long::sum);
     }
 
     public void addPack(String setName) {
@@ -120,6 +129,7 @@ public class ArchipelagoData implements SaveFileContent {
         }
 
         loadStringLongMap(data, "townEvents", completedTownInnEvents);
+        loadStringLongMap(data, "townQuests", completedTownQuests);
         loadStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
         loadStringLongMap(data, "items", itemsGainedById);
         loadStringLongMap(data, "packs", packsEarnedBySet);
@@ -136,6 +146,7 @@ public class ArchipelagoData implements SaveFileContent {
         SaveFileData data = new SaveFileData();
 
         saveStringLongMap(data, "townEvents", completedTownInnEvents);
+        saveStringLongMap(data, "townQuests", completedTownQuests);
         saveStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
         saveStringLongMap(data, "items", itemsGainedById);
         saveStringLongMap(data, "packs", packsEarnedBySet);

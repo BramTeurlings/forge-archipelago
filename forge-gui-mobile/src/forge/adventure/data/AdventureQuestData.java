@@ -399,6 +399,10 @@ public class AdventureQuestData implements Serializable {
             switch (stage.getStatus()) {
                 case ACTIVE:
                     done = stage.handleEvent(event) == COMPLETE && done;
+                    // If complete is true for the final stage of the quest, update the completed quests in ArchipelagoData
+                    if (stage == stages[stages.length - 1] && stages[stages.length - 1].getStatus() == COMPLETE) {
+                        ArchipelagoData.getInstance().addCompletedQuests(event);
+                    }
                     break;
                 case COMPLETE:
                     continue;
