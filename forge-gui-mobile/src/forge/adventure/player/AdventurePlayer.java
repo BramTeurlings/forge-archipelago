@@ -897,6 +897,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
                 }
                 archipelagoData.addCardByRarity(reward.getCard().getRarity().toString());
                 forgeNotification += "CARD REWARD DETECTED: " + reward.getCard().getCardName();
+                System.out.println(forgeNotification);
                 break;
             case Gold:
                 addGold(reward.getCount());
@@ -931,9 +932,8 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
             default:
                 return;
         }
-        System.out.println(forgeNotification);
         // Todo: Remove this so it only shows important notifications but this is a good example of how to summon a dialog.
-        GameHUD.getInstance().addNotification(forgeNotification, 1f, 4f, 1f);
+        GameHUD.getInstance().addNotification(forgeNotification, 0.5f, 3f, 0.5f);
     }
 
     private void refreshEditor() {
