@@ -4,6 +4,9 @@ import forge.adventure.scene.TileMapScene;
 import forge.adventure.util.AdventureQuestEvent;
 import forge.adventure.util.SaveFileContent;
 import forge.adventure.util.SaveFileData;
+import forge.deck.CardPool;
+import forge.deck.Deck;
+import forge.item.PaperCard;
 
 import java.util.*;
 
@@ -16,6 +19,8 @@ public class ArchipelagoData implements SaveFileContent {
     private final Map<String, Long> cardsEarnedByRarity = new HashMap<>();
     private final Map<String, Long> itemsGainedById = new HashMap<>();
     private final Map<String, Long> packsEarnedBySet = new HashMap<>();
+    private final Set<String> cardsUnlockedByName = new HashSet<>();
+    private final Set<String> setsUnlockedByCode = new HashSet<>();
     private final Set<String> bossesDefeatedByName = new HashSet<>();
     private final Set<String> miniBossesDefeatedByName = new HashSet<>();
     private int totalGoldEarned = 0;
@@ -28,6 +33,34 @@ public class ArchipelagoData implements SaveFileContent {
 
     public static ArchipelagoData getInstance() {
         return instance == null ? instance = new ArchipelagoData() : instance;
+    }
+
+    public boolean checkDeckUnlocked(Deck selectedDeck) {
+        // Todo: Uncomment this once our set unlock logic is in place
+//        if (selectedDeck == null) {
+//            return true;
+//        }
+//
+//        CardPool pool = selectedDeck.getAllCardsInASinglePool(true, true);
+//        for (PaperCard card : pool.toFlatList()) {
+//            String cardName = card.getName();
+//
+//            // Card explicitly unlocked
+//            if (cardsUnlockedByName.contains(cardName)) {
+//                continue;
+//            }
+//
+//            // Card sets unlocked
+//            String setCode = card.getEdition();
+//            if (setCode != null && setsUnlockedByCode.contains(setCode)) {
+//                continue;
+//            }
+//
+//            // Neither card nor set is unlocked
+//            return false;
+//        }
+
+        return true;
     }
 
     public void addCompletedTownInnEvents() {
@@ -80,6 +113,13 @@ public class ArchipelagoData implements SaveFileContent {
     }
     public boolean addBossDefeated(String bossName) {
         return bossesDefeatedByName.add(bossName);
+    }
+
+    public boolean addCardUnlockedByName(String cardName) {
+        return cardsUnlockedByName.add(cardName);
+    }
+    public boolean addSetUnlockedByCode(String setCode) {
+        return setsUnlockedByCode.add(setCode);
     }
 
     // Helper functions for saving and loading
@@ -138,6 +178,8 @@ public class ArchipelagoData implements SaveFileContent {
         loadStringLongMap(data, "packs", packsEarnedBySet);
         loadStringSet(data, "bossesDefeated", bossesDefeatedByName);
         loadStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
+        loadStringSet(data, "cardsUnlocked", cardsUnlockedByName);
+        loadStringSet(data, "setsUnlocked", setsUnlockedByCode);
 
         totalGoldEarned = data.containsKey("totalGold") ? data.readInt("totalGold") : 0;
         totalExtraMaxLifeEarned = data.containsKey("extraLife") ? data.readInt("extraLife") : 0;
@@ -155,6 +197,8 @@ public class ArchipelagoData implements SaveFileContent {
         saveStringLongMap(data, "packs", packsEarnedBySet);
         saveStringSet(data, "bossesDefeated", bossesDefeatedByName);
         saveStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
+        saveStringSet(data, "cardsUnlocked", cardsUnlockedByName);
+        saveStringSet(data, "setsUnlocked", setsUnlockedByCode);
 
         data.store("totalGold", totalGoldEarned);
         data.store("extraLife", totalExtraMaxLifeEarned);
