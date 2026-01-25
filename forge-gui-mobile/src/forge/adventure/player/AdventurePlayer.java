@@ -164,6 +164,18 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
         decks.set(0, deck);
 
         cards.addAllFlat(deck.getAllCardsInASinglePool(true, true).toFlatList());
+        // Add all cards to the valid pool of cards in ArchipelagoData
+        ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
+        for (PaperCard card : cards.toFlatList()) {
+            archipelagoData.addCardUnlockedByName(card.getCardName());
+        }
+        // Add basic lands so the player doesn't need to unlock them
+        archipelagoData.addCardUnlockedByName("Plains");
+        archipelagoData.addCardUnlockedByName("Forest");
+        archipelagoData.addCardUnlockedByName("Swamp");
+        archipelagoData.addCardUnlockedByName("Mountain");
+        archipelagoData.addCardUnlockedByName("Island");
+        archipelagoData.addCardUnlockedByName("Wastes");
 
         this.difficultyData.startingLife = difficultyData.startingLife;
         this.difficultyData.startingMoney = difficultyData.startingMoney;
