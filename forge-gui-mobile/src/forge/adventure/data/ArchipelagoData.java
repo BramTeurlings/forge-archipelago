@@ -8,8 +8,7 @@ import forge.adventure.util.SaveFileData;
 import java.util.*;
 
 // This class will keep track of data relevant for the Archipelago implementation
-// Persists and loads data inside/from the user's save file.
-// Todo: Persist (mini-)boss encounter victories.
+// Persists and loads data inside/from the user's save file
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
     private final Map<String, Long> completedTownInnEvents = new HashMap<>();
@@ -24,8 +23,6 @@ public class ArchipelagoData implements SaveFileContent {
     private int totalShardsEarned = 0;
 
     public ArchipelagoData() {
-        // Todo: Get randomizer related adventure progress data from save file here.
-        // Todo: Get archipelago progress data from save file here.
         instance = this;
     }
 
@@ -55,6 +52,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     // Due to MapDialog.SetEffects() using just a name string to add items to the player's inventory, it's likely that the name is unique.
+    // Todo: Verify that item names are unique.
     public void addItem(String itemName) {
         itemsGainedById.merge(itemName, 1L, Long::sum);
         System.out.println("FORGE_ARCHIPELAGO: ITEM REWARD DETECTED: " + itemName);
