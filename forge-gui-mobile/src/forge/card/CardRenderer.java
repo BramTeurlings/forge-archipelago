@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import forge.ImageKeys;
+import forge.adventure.data.ArchipelagoData;
+import forge.item.PaperCard;
 import forge.localinstance.properties.ForgeConstants;
 import forge.util.*;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +69,8 @@ public class CardRenderer {
         BehindHorz,
         BehindVert
     }
+
+    static final ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
 
     // class that simplifies the callback logic of CachedCardImage
     static class RendererCachedCardImage extends CachedCardImage {
@@ -474,15 +478,23 @@ public class CardRenderer {
         }
     }
 
+    // Todo: This function only draws the darkened overlay when cards are shown as listItems, not as full card images.
     public static void drawCardListItem(Graphics g, FSkinFont font, FSkinColor foreColor, IPaperCard pc, int count, String suffix, float x, float y, float w, float h, boolean compactMode) {
         final CardView card = CardView.getCardForUi(pc);
         final CardStateView state = card.getCurrentState();
-        drawCardListItem(g, font, foreColor, getCardArt(pc), card, pc.getEdition(),
+        boolean isUnlocked = archipelagoData.checkCardUnlocked((PaperCard) pc);
+        drawLockAwareCardListItem(g, font, foreColor, getCardArt(pc), card, pc.getEdition(),
                 pc.getRarity(), state.getPower(), state.getToughness(),
-                state.getLoyalty(), count, suffix, x, y, w, h, compactMode);
+                state.getLoyalty(), count, suffix, x, y, w, h, compactMode, isUnlocked);
     }
 
     public static void drawCardListItem(Graphics g, FSkinFont font, FSkinColor foreColor, FImageComplex cardArt, CardView card, String set, CardRarity rarity, int power, int toughness, String loyalty, int count, String suffix, float x, float y, float w, float h, boolean compactMode) {
+        drawLockAwareCardListItem(g, font, foreColor, cardArt, card, set,
+                rarity, power, toughness,
+                loyalty, count, suffix, x, y, w, h, compactMode, false);
+    }
+
+    public static void drawLockAwareCardListItem(Graphics g, FSkinFont font, FSkinColor foreColor, FImageComplex cardArt, CardView card, String set, CardRarity rarity, int power, int toughness, String loyalty, int count, String suffix, float x, float y, float w, float h, boolean compactMode, boolean isUnlocked) {
         float cardArtHeight = h + 2 * FList.PADDING;
         float cardArtWidth = cardArtHeight * CARD_ART_RATIO;
         CardView.CardStateView cardCurrentState = card.getCurrentState();
@@ -490,6 +502,7 @@ public class CardRenderer {
             float artX = x - FList.PADDING;
             float artY = y - FList.PADDING;
 
+            // Todo: This draws the card, apply any filters for locked cards here (lock icon and/or greyscale)
             if (card.isSplitCard() && !CardRendererUtils.hasAftermath(card)) {
                 //draw split art with proper orientation
                 float srcY = cardArt.getHeight() * 13f / 354f;
@@ -504,7 +517,11 @@ public class CardRenderer {
                 g.drawRotatedImage(cardArt.getTexture(), artX, artY, cardArtWidth, cardArtHeight / 2, artX + cardArtWidth, artY + cardArtHeight / 2, cardArt.getRegionX(), cardArt.getRegionY(), (int) cardArt.getWidth(), (int) cardArt.getHeight() / 2, 0);
                 g.drawRotatedImage(secondArt.getTexture(), artX - cardArtHeight / 2, artY + cardArtHeight / 2, cardArtHeight / 2, cardArtWidth, artX, artY + cardArtHeight / 2, secondArt.getRegionX(), secondArt.getRegionY(), (int) secondArt.getWidth(), (int) secondArt.getHeight(), 90);
             } else {
-                g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight);
+                if (isUnlocked) {
+                    g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight);
+                } else {
+                    g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight, true);
+                }
             }
         }
 
