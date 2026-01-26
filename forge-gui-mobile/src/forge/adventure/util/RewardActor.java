@@ -34,6 +34,7 @@ import forge.Forge;
 import forge.Graphics;
 import forge.ImageKeys;
 import forge.StaticData;
+import forge.adventure.data.ArchipelagoData;
 import forge.adventure.data.ItemData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.scene.RewardScene;
@@ -102,6 +103,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
     private boolean shouldDisplayText = false;
     private boolean isDragging = false;
     private boolean isNew = false;
+    private ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
 
     @Override
     public void dispose() {
@@ -1150,6 +1152,9 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 TextureRegion icon = FSkinImage.ADV_FLIPICON.getTextureRegion();
                 float scale = getHeight() / 4f;
                 batch.draw(icon, getOriginX() - scale / 2f, getOriginY() - scale / 2f, scale, scale);
+            }
+            if (!archipelagoData.checkCardUnlocked(reward.getCard())) {
+                archipelagoData.drawLockedCardOverlay(batch, x, -getHeight() / 2, width, getHeight());
             }
         }
     }

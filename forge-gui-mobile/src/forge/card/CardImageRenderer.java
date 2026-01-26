@@ -1,8 +1,7 @@
 package forge.card;
 
 import static forge.assets.FSkin.getDefaultSkinFile;
-import static forge.card.CardRenderer.CROP_MULTIPLIER;
-import static forge.card.CardRenderer.isModernFrame;
+import static forge.card.CardRenderer.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -268,10 +267,9 @@ public class CardImageRenderer {
 
         // Todo: If check based on if the card is locked or not
         // Todo: Add lock icon if card is locked
-        float oldalpha = g.getfloatAlphaComposite();
-        g.setAlphaComposite(0.4f);
-        g.fillRect(Color.BLACK, x, y, w, h);
-        g.setAlphaComposite(oldalpha);
+        if (!archipelagoData.checkCardUnlocked(paperCard)) {
+            archipelagoData.drawLockedCardOverlay(g, x, y, w, h);
+        }
     }
     private static void drawOutlineColor(Graphics g, ColorSet colors, float x, float y, float w, float h) {
         if (colors == null)

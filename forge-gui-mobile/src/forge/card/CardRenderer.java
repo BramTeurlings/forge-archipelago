@@ -517,10 +517,9 @@ public class CardRenderer {
                 g.drawRotatedImage(cardArt.getTexture(), artX, artY, cardArtWidth, cardArtHeight / 2, artX + cardArtWidth, artY + cardArtHeight / 2, cardArt.getRegionX(), cardArt.getRegionY(), (int) cardArt.getWidth(), (int) cardArt.getHeight() / 2, 0);
                 g.drawRotatedImage(secondArt.getTexture(), artX - cardArtHeight / 2, artY + cardArtHeight / 2, cardArtHeight / 2, cardArtWidth, artX, artY + cardArtHeight / 2, secondArt.getRegionX(), secondArt.getRegionY(), (int) secondArt.getWidth(), (int) secondArt.getHeight(), 90);
             } else {
-                if (isUnlocked) {
-                    g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight);
-                } else {
-                    g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight, true);
+                g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight);
+                if (!isUnlocked) {
+                    archipelagoData.drawLockedCardOverlay(g, artX, artY, cardArtWidth, cardArtHeight);
                 }
             }
         }
@@ -615,7 +614,15 @@ public class CardRenderer {
         g.drawText(set, font, foreColor, x, y, w, h, false, Align.center, true);
     }
 
+    private static void drawCardLock(Graphics g, float x, float y, float w, float h, IPaperCard pc) {
+        // Draw the lock overtop of the card if the card is locked here.
+        if (!archipelagoData.checkCardUnlocked((PaperCard) pc)) {
+            archipelagoData.drawLockedCardOverlay(g, x, y, w, h);
+        }
+    }
+
     public static void drawCard(Graphics g, IPaperCard pc, float x, float y, float w, float h, CardStackPosition pos) {
+        // Todo: Apparently this draws card art, ensure we draw the lock symbol overtop of the card. This should happen both in listViews, full cardImage views in shops, card rewards & player deck editor.
         Texture image = new RendererCachedCardImage(pc, false).getImage();
         final CardView card = CardView.getCardForUi(pc);
         float radius = (h - w) / 8;
@@ -653,6 +660,7 @@ public class CardRenderer {
             //if card has invalid or no texture due to sudden changes in ImageCache, draw CardImageRenderer instead and wait for it to refresh automatically
             CardImageRenderer.drawCardImage(g, card, false, x, y, w, h, pos, true, true);
         }
+        drawCardLock(g, x, y, w, h, pc);
     }
 
     public static void drawCard(Graphics g, CardView card, float x, float y, float w, float h, CardStackPosition pos, boolean rotate) {
