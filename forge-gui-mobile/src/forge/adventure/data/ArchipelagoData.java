@@ -1,9 +1,16 @@
 package forge.adventure.data;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import forge.Graphics;
 import forge.adventure.scene.TileMapScene;
 import forge.adventure.util.AdventureQuestEvent;
 import forge.adventure.util.SaveFileContent;
 import forge.adventure.util.SaveFileData;
+import forge.assets.FImage;
+import forge.assets.FSkinImage;
+import forge.assets.ImageCache;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.item.PaperCard;
@@ -27,12 +34,51 @@ public class ArchipelagoData implements SaveFileContent {
     private int totalExtraMaxLifeEarned = 0;
     private int totalShardsEarned = 0;
 
+    // Todo: Move to ArchipelagoUtils.java file or something similar
+    private final FImage CARD_LOCKED_ICON = FSkinImage.LOCK;
+
     public ArchipelagoData() {
         instance = this;
     }
 
     public static ArchipelagoData getInstance() {
         return instance == null ? instance = new ArchipelagoData() : instance;
+    }
+
+    // Todo: Move to ArchipelagoUtils.java file or something similar
+    public void drawLockedCardOverlay(
+            Batch batch, float x, float y, float w, float h) {
+
+        // Todo: Darkening the card doesn't actually work here yet, please fix.
+        // Darken card
+//        batch.setColor(0.5f, 0.5f, 0.5f, 0.50f);
+//        batch.draw(
+//                FSkinImage.BLANK.getTextureRegion(),
+//                x, y, w, h
+//        );
+//        batch.setColor(Color.WHITE);
+
+        // Draw lock icon
+        TextureRegion lockIcon = FSkinImage.LOCK.getTextureRegion();
+        float lockSize = w * 0.25f;
+        float lockX = x + (w - lockSize) / 2f;
+        float lockY = y + h - lockSize - (h * 0.05f);
+
+        batch.draw(lockIcon, lockX, lockY, lockSize, lockSize);
+    }
+
+    // Todo: Move to ArchipelagoUtils.java file or something similar
+    public void drawLockedCardOverlay(Graphics g, float x, float y, float w, float h) {
+        float lockSize = w * 0.25f; // 25% of card width
+        float lockX = x + (w - lockSize) / 2f; // Centered horizontally
+        float lockY = y + h * 0.05f; // Slight offset from top
+        // Todo: Line below is not valid but I want to draw the padlock overtop of the card here, preferably centered at the top of the card.
+        // Draw the card darker than the rest to show it's not unlocked.
+        CARD_LOCKED_ICON.draw(g, lockX, lockY, lockSize, lockSize);
+        float oldalpha = g.getfloatAlphaComposite();
+        g.setAlphaComposite(0.25f);
+        g.fillRect(Color.BLACK, x, y, w, h);
+        g.setAlphaComposite(oldalpha);
     }
 
     public boolean checkCardUnlocked(PaperCard card) {

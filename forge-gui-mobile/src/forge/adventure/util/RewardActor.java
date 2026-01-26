@@ -33,6 +33,8 @@ import com.github.tommyettinger.textra.TypingLabel;
 
 import forge.Forge;
 import forge.ImageKeys;
+import forge.StaticData;
+import forge.adventure.data.ArchipelagoData;
 import forge.adventure.data.ItemData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.scene.RewardScene;
@@ -111,6 +113,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
     private int foilIndex;
     private boolean boosterTriggered = false;
     private boolean isUpdating = false;
+    private ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
 
     @Override
     public void dispose() {
@@ -789,10 +792,10 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 useMipMaps = img.getTextureData() != null && img.getTextureData().useMipMaps();
             } catch (Exception ignored) {}
 
-            TextureFilter filter = useMipMaps 
+            TextureFilter filter = useMipMaps
                 ? Texture.TextureFilter.MipMapLinearLinear
                 : Texture.TextureFilter.Linear;
-                
+
             image.setFilter(filter, Texture.TextureFilter.Linear);
         }
         if (toolTipImage == null)
@@ -1094,7 +1097,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 PaperCard pc = reward.getCard();
 
                 if (pc != null) {
-                    DeckFormat deckFormat = AdventurePlayer.current().isCommanderMode() 
+                    DeckFormat deckFormat = AdventurePlayer.current().isCommanderMode()
                         ? DeckFormat.Commander
                         : DeckFormat.Adventure;
                     int maxCopies = deckFormat.getMaxCardCopies(pc);
@@ -1316,6 +1319,9 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
             if (hasbackface) {
                 float scale = getHeight() / 4f;
                 batch.draw(FSkinImage.ADV_FLIPICON.getTextureRegion(), getOriginX() - scale / 2f, getOriginY() - scale / 2f, scale, scale);
+            }
+            if (!archipelagoData.checkCardUnlocked(reward.getCard())) {
+                archipelagoData.drawLockedCardOverlay(batch, x, -getHeight() / 2, width, getHeight());
             }
         }
     }
