@@ -1,0 +1,49 @@
+package forge.adventure.util;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import forge.Graphics;
+import forge.adventure.data.ArchipelagoData;
+import forge.assets.FImage;
+import forge.assets.FSkinImage;
+
+public class ArchipelagoUtil {
+    private static final FImage CARD_LOCKED_ICON = FSkinImage.LOCK;
+
+    // Todo: Move to ArchipelagoUtils.java file or something similar
+    public static void drawLockedCardOverlay(
+            Batch batch, float x, float y, float w, float h) {
+
+        // Todo: Darkening the card doesn't actually work here yet, please fix.
+        // Darken card
+//        batch.setColor(0.5f, 0.5f, 0.5f, 0.50f);
+//        batch.draw(
+//                FSkinImage.BLANK.getTextureRegion(),
+//                x, y, w, h
+//        );
+//        batch.setColor(Color.WHITE);
+
+        // Draw lock icon
+        TextureRegion lockIcon = FSkinImage.LOCK.getTextureRegion();
+        float lockSize = w * 0.25f;
+        float lockX = x + (w - lockSize) / 2f;
+        float lockY = y + h - lockSize - (h * 0.05f);
+
+        batch.draw(lockIcon, lockX, lockY, lockSize, lockSize);
+    }
+
+    // Todo: Move to ArchipelagoUtils.java file or something similar
+    public static void drawLockedCardOverlay(Graphics g, float x, float y, float w, float h) {
+        float lockSize = w * 0.25f;
+        float lockX = x + (w - lockSize) / 2f;
+        float lockY = y + h * 0.05f;
+        CARD_LOCKED_ICON.draw(g, lockX, lockY, lockSize, lockSize);
+
+        // Draw the card darker than the rest to show it's not unlocked.
+        float oldalpha = g.getfloatAlphaComposite();
+        g.setAlphaComposite(0.25f);
+        g.fillRect(Color.BLACK, x, y, w, h);
+        g.setAlphaComposite(oldalpha);
+    }
+}

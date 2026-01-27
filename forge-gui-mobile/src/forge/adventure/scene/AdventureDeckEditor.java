@@ -529,7 +529,6 @@ public class AdventureDeckEditor extends FDeckEditor {
         private final String captionPrefix;
 
         protected CollectionAutoSellPage() {
-            // Todo: This renders a card with an AutosellLabel overlayed I'm pretty sure
             super(new AdventureCardManager(), ItemManagerConfig.ADVENTURE_EDITOR_POOL, Forge.getLocalizer().getMessage("lblAutoSell"), AUTO_SELL_ICON);
             this.captionPrefix = Forge.getLocalizer().getMessage("lblAutoSell");
         }

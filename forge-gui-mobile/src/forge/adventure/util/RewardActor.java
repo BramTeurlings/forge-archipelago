@@ -1154,7 +1154,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 batch.draw(icon, getOriginX() - scale / 2f, getOriginY() - scale / 2f, scale, scale);
             }
             if (!archipelagoData.checkCardUnlocked(reward.getCard())) {
-                archipelagoData.drawLockedCardOverlay(batch, x, -getHeight() / 2, width, getHeight());
+                ArchipelagoUtil.drawLockedCardOverlay(batch, x, -getHeight() / 2, width, getHeight());
             }
         }
     }
