@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import forge.Graphics;
-import forge.adventure.data.ArchipelagoData;
 import forge.assets.FImage;
 import forge.assets.FSkinImage;
 

@@ -1,16 +1,9 @@
 package forge.adventure.data;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import forge.Graphics;
 import forge.adventure.scene.TileMapScene;
 import forge.adventure.util.AdventureQuestEvent;
 import forge.adventure.util.SaveFileContent;
 import forge.adventure.util.SaveFileData;
-import forge.assets.FImage;
-import forge.assets.FSkinImage;
-import forge.assets.ImageCache;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.item.PaperCard;
