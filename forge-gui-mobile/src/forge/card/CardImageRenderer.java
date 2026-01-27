@@ -13,6 +13,7 @@ import forge.adventure.util.Config;
 import forge.adventure.util.Controls;
 import forge.adventure.util.Reward;
 import forge.adventure.util.RewardActor;
+import forge.adventure.util.ArchipelagoUtil;
 import forge.assets.*;
 import forge.item.InventoryItem;
 import forge.item.PaperCard;
@@ -122,7 +123,7 @@ public class CardImageRenderer {
     public static void drawCardImage(Graphics g, CardView card, boolean altState, float x, float y, float w, float h, CardStackPosition pos, boolean useCardBGTexture, boolean noText, boolean isChoiceList, boolean showArtist) {
         drawCardImage(g, card, altState, x, y, w, h, pos, useCardBGTexture, noText, isChoiceList, showArtist, true);
     }
-    // Todo: This draws the card with the forge style, it is only shown briefly when we have not yet fetched the card image, not the card image as a whole. Make sure this gets the locked Decal as well.
+
     public static void drawCardImage(Graphics g, CardView card, boolean altState, float x, float y, float w, float h, CardStackPosition pos, boolean useCardBGTexture, boolean noText, boolean isChoiceList, boolean showArtist, boolean showArtBox) {
         drawCardImage(g, card, altState, x, y, w, h, pos, useCardBGTexture, noText, isChoiceList, showArtist, showArtBox, false);
     }
@@ -291,10 +292,8 @@ public class CardImageRenderer {
         if (showArtist)
             g.drawOutlinedText(artist, TEXT_FONT, Color.WHITE, Color.DARK_GRAY, x + (getCapHeight(TYPE_FONT) / 2), y + (getCapHeight(TYPE_FONT) / 2), w, h, false, Align.left, false);
 
-        // Todo: If check based on if the card is locked or not
-        // Todo: Add lock icon if card is locked
         if (!archipelagoData.checkCardUnlocked(paperCard)) {
-            archipelagoData.drawLockedCardOverlay(g, x, y, w, h);
+            ArchipelagoUtil.drawLockedCardOverlay(g, x, y, w, h);
         }
     }
     private static void drawOutlineColor(Graphics g, ColorSet colors, float x, float y, float w, float h) {

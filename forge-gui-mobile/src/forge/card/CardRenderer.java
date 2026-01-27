@@ -8,6 +8,7 @@ import java.util.Map;
 
 import forge.ImageKeys;
 import forge.adventure.data.ArchipelagoData;
+import forge.adventure.util.ArchipelagoUtil;
 import forge.item.PaperCard;
 import forge.localinstance.properties.ForgeConstants;
 import forge.util.*;
@@ -540,7 +541,7 @@ public class CardRenderer {
             } else {
                 g.drawImage(cardArt, artX, artY, cardArtWidth, cardArtHeight);
                 if (!isUnlocked) {
-                    archipelagoData.drawLockedCardOverlay(g, artX, artY, cardArtWidth, cardArtHeight);
+                    ArchipelagoUtil.drawLockedCardOverlay(g, artX, artY, cardArtWidth, cardArtHeight);
                 }
             }
         }
@@ -638,7 +639,7 @@ public class CardRenderer {
     private static void drawCardLock(Graphics g, float x, float y, float w, float h, IPaperCard pc) {
         // Draw the lock overtop of the card if the card is locked here.
         if (!archipelagoData.checkCardUnlocked((PaperCard) pc)) {
-            archipelagoData.drawLockedCardOverlay(g, x, y, w, h);
+            ArchipelagoUtil.drawLockedCardOverlay(g, x, y, w, h);
         }
     }
 
