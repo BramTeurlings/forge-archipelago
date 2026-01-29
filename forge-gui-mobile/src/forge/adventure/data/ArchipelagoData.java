@@ -1,12 +1,15 @@
 package forge.adventure.data;
 
+import com.google.common.collect.Iterables;
+import forge.StaticData;
 import forge.adventure.scene.TileMapScene;
-import forge.adventure.util.AdventureQuestEvent;
-import forge.adventure.util.SaveFileContent;
-import forge.adventure.util.SaveFileData;
+import forge.adventure.stage.GameHUD;
+import forge.adventure.util.*;
+import forge.card.CardEdition;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.item.PaperCard;
+import io.sentry.util.CollectionUtils;
 
 import java.util.*;
 
@@ -14,6 +17,12 @@ import java.util.*;
 // Persists and loads data inside/from the user's save file
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
+    // Ask Forge for the full list of all sets
+    private final CardEdition.Collection allEditions = StaticData.instance().getEditions();
+    private final Iterable<CardEdition> allOrderedEditions = allEditions.getOrderedEditions();
+    // Todo: This works fine for singleplayer even when updates come out but the fact that the list of all sets can grow will cause problems in Archipelago due to a variable amount of checks.
+    private final Set<String> allCardSets = new HashSet<>();
+    // Actual user data we want to store
     private final Map<String, Long> completedTownInnEvents = new HashMap<>();
     private final Map<String, Long> completedTownQuests = new HashMap<>();
     private final Map<String, Long> cardsEarnedByRarity = new HashMap<>();
@@ -33,6 +42,43 @@ public class ArchipelagoData implements SaveFileContent {
 
     public static ArchipelagoData getInstance() {
         return instance == null ? instance = new ArchipelagoData() : instance;
+    }
+
+    public void unlockRandomSet() {
+        // Subtract unlocked sets from full list.
+        Set<String> lockedSets = new HashSet<>(allCardSets);
+        lockedSets.removeAll(setsUnlockedByCode);
+
+        // Nothing left to unlock
+        if (lockedSets.isEmpty()) {
+            return;
+        }
+
+        // Todo: After picking a random set, check if boosters can be generated from this set, if not, add it to the unlocked sets and generate another one.
+        // Pick a random locked set
+        int index = new Random().nextInt(lockedSets.size());
+        String setToUnlock = null;
+
+        int i = 0;
+        for (String set : lockedSets) {
+            if (i++ == index) {
+                setToUnlock = set;
+                break;
+            }
+        }
+
+        if (setToUnlock != null) {
+            addSetUnlockedByCode(setToUnlock);
+            String setUnlockedText = "FORGE_ARCHIPELAGO: CARD SET REWARD: " + setToUnlock;
+            // Some sets don't have booster packs such as full-art land sets (P23).
+            var booster = StaticData.instance().getBoosters().get(setToUnlock);
+            if (booster != null) {
+                Current.player().addBooster(AdventureEventController.instance().generateBooster(setToUnlock));
+                setUnlockedText = "FORGE_ARCHIPELAGO: CARD SET REWARD + BOOSTER DETECTED: " + setToUnlock;
+            }
+            System.out.println(setUnlockedText);
+            GameHUD.getInstance().addNotification(setUnlockedText, 0.5f, 3f, 0.5f);
+        }
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
@@ -81,6 +127,9 @@ public class ArchipelagoData implements SaveFileContent {
 
     public void addCardByRarity(String rarity) {
         cardsEarnedByRarity.merge(rarity, 1L, Long::sum);
+
+        // Todo: Temporary unlock of new set when player gains a card, remove later
+        unlockRandomSet();
     }
 
     public void addGold(int amount) {
@@ -175,6 +224,16 @@ public class ArchipelagoData implements SaveFileContent {
             return;
         }
 
+        Set<String> newSetCodes = new HashSet<>();
+        for (CardEdition edition : allOrderedEditions) {
+            newSetCodes.add(edition.getCode());
+        }
+        if (!newSetCodes.equals(allCardSets)) {
+            allCardSets.clear();
+            allCardSets.addAll(newSetCodes);
+        }
+
+        // Load save data
         loadStringLongMap(data, "townEvents", completedTownInnEvents);
         loadStringLongMap(data, "townQuests", completedTownQuests);
         loadStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
