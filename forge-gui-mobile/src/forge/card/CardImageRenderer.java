@@ -265,10 +265,6 @@ public class CardImageRenderer {
         //draw artist
         if (showArtist)
             g.drawOutlinedText(artist, TEXT_FONT, Color.WHITE, Color.DARK_GRAY, x + (getCapHeight(TYPE_FONT) / 2), y + (getCapHeight(TYPE_FONT) / 2), w, h, false, Align.left, false);
-
-        if (!archipelagoData.checkCardUnlocked(paperCard)) {
-            ArchipelagoUtil.drawLockedCardOverlay(g, x, y, w, h);
-        }
     }
     private static void drawOutlineColor(Graphics g, ColorSet colors, float x, float y, float w, float h) {
         if (colors == null)
