@@ -36,6 +36,10 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
+        if (card == null || card.getName() == null) {
+            // If we don't have a valid card or cardname, just ignore it meaning returning true in this case.
+            return true;
+        }
         String cardName = card.getName();
 
         // Card explicitly unlocked
