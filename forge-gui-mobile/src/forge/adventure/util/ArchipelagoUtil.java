@@ -10,7 +10,6 @@ import forge.assets.FSkinImage;
 public class ArchipelagoUtil {
     private static final FImage CARD_LOCKED_ICON = FSkinImage.LOCK;
 
-    // Todo: Move to ArchipelagoUtils.java file or something similar
     public static void drawLockedCardOverlay(
             Batch batch, float x, float y, float w, float h) {
 
@@ -24,15 +23,24 @@ public class ArchipelagoUtil {
 //        batch.setColor(Color.WHITE);
 
         // Draw lock icon
-        TextureRegion lockIcon = FSkinImage.LOCK.getTextureRegion();
-        float lockSize = w * 0.25f;
-        float lockX = x + (w - lockSize) / 2f;
-        float lockY = y + h - lockSize - (h * 0.05f);
+        // Normalize bounds (works for flipped cards too)
+        float drawX = Math.min(x, x + w);
+        float drawY = Math.min(y, y + h);
+        float drawW = Math.abs(w);
+        float drawH = Math.abs(h);
 
+        // Lock size
+        float lockSize = drawW * 0.25f;
+
+        // Centered horizontally, near visual top
+        float lockX = drawX + (drawW - lockSize) / 2f;
+        float lockY = drawY + drawH - lockSize - (drawH * 0.05f);
+
+        // Draw lock
+        TextureRegion lockIcon = FSkinImage.LOCK.getTextureRegion();
         batch.draw(lockIcon, lockX, lockY, lockSize, lockSize);
     }
 
-    // Todo: Move to ArchipelagoUtils.java file or something similar
     public static void drawLockedCardOverlay(Graphics g, float x, float y, float w, float h) {
         float lockSize = w * 0.25f;
         float lockX = x + (w - lockSize) / 2f;
