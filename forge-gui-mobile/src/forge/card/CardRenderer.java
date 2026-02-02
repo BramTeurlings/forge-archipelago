@@ -492,7 +492,7 @@ public class CardRenderer {
     public static void drawCardListItem(Graphics g, FSkinFont font, FSkinColor foreColor, FImageComplex cardArt, CardView card, String set, CardRarity rarity, int power, int toughness, String loyalty, int count, String suffix, float x, float y, float w, float h, boolean compactMode) {
         drawLockAwareCardListItem(g, font, foreColor, cardArt, card, set,
                 rarity, power, toughness,
-                loyalty, count, suffix, x, y, w, h, compactMode, false);
+                loyalty, count, suffix, x, y, w, h, compactMode, true);
     }
 
     public static void drawLockAwareCardListItem(Graphics g, FSkinFont font, FSkinColor foreColor, FImageComplex cardArt, CardView card, String set, CardRarity rarity, int power, int toughness, String loyalty, int count, String suffix, float x, float y, float w, float h, boolean compactMode, boolean isUnlocked) {
