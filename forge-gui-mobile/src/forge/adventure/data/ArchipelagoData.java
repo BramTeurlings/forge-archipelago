@@ -35,6 +35,11 @@ public class ArchipelagoData implements SaveFileContent {
     private int totalGoldEarned = 0;
     private int totalExtraMaxLifeEarned = 0;
     private int totalShardsEarned = 0;
+    // List of unlockable checks
+    // Todo: Fill list based on archipelago xml contents
+    // Todo: Implement logic to divide the total amount of sets by the amountOfSetUnlockChecks and give the player an amount of checks equal to the result. Also keep track of the rest amount by using a float for the next check.
+    private final int amountOfSetUnlockChecks = 100;
+    private final Set<String> listOfUnlockableItems = new HashSet<>();
 
     public ArchipelagoData() {
         instance = this;
