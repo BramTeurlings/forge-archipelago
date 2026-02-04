@@ -15,6 +15,7 @@ import java.util.*;
 // Persists and loads data inside/from the user's save file
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
+
     // Ask Forge for the full list of all sets
     private final CardEdition.Collection allEditions = StaticData.instance().getEditions();
     private final Iterable<CardEdition> allOrderedEditions = allEditions.getOrderedEditions();
@@ -23,6 +24,7 @@ public class ArchipelagoData implements SaveFileContent {
     // List of teleportation runes that we use to gate regions
     // Todo: Move this and other static locations/checks/values to their own file.
     private final Set<String> regionTeleportingRunes = new HashSet<>(Arrays.asList("White rune","Black rune","Blue rune","Red rune","Green rune"));
+
     // Actual user data we want to store
     private final Map<String, Long> completedTownInnEvents = new HashMap<>();
     private final Map<String, Long> completedTownQuests = new HashMap<>();
@@ -107,6 +109,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
+        if (card == null) return true;
         String cardName = card.getName();
 
         // Card explicitly unlocked
@@ -155,6 +158,11 @@ public class ArchipelagoData implements SaveFileContent {
 
         // Todo: Temporary unlock of new set when player gains a card, remove later
         unlockRandomSet();
+        unlockRegionByName("white");
+        unlockRegionByName("blue");
+        unlockRegionByName("black");
+        unlockRegionByName("red");
+        unlockRegionByName("green");
     }
 
     public void addGold(int amount) {

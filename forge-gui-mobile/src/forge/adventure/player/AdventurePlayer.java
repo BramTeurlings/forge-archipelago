@@ -892,7 +892,6 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
     }
 
     public void addReward(Reward reward) {
-        String forgeNotification = "FORGE_ARCHIPELAGO: ";
         ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
         switch (reward.getType()) {
             case Card:
@@ -903,44 +902,30 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
                     refreshEditor();
                 }
                 archipelagoData.addCardByRarity(reward.getCard().getRarity().toString());
-                forgeNotification += "CARD REWARD DETECTED: " + reward.getCard().getCardName();
-                System.out.println(forgeNotification);
                 break;
             case Gold:
                 addGold(reward.getCount());
-                archipelagoData.addGold(reward.getCount());
-                forgeNotification += "GOLD REWARD DETECTED: +" + reward.getCount();
                 break;
             case Item:
                 if (reward.getItem() != null) {
                     addItem(reward.getItem().name);
-                    archipelagoData.addItem(reward.getItem().getName());
-                    forgeNotification += "ITEM REWARD DETECTED: " + reward.getItem().name;
                 }
                 break;
             case CardPack:
                 if (reward.getDeck() != null) {
                     boostersOwned.add(reward.getDeck());
-                    // Todo: This stores the name of booster pack, ensure this is all we need and not something like the set ID or tag.
                     archipelagoData.addPack(reward.getDeck().getName());
-                    forgeNotification += "CARD PACK REWARD DETECTED: " + reward.getDeck().getName();
                 }
                 break;
             case Life:
                 addMaxLife(reward.getCount());
-                archipelagoData.addMaxLife(reward.getCount());
-                forgeNotification += "MAX LIFE REWARD DETECTED: +" + reward.getCount();
                 break;
             case Shards:
                 addShards(reward.getCount());
-                archipelagoData.addShards(reward.getCount());
-                forgeNotification += "SHARD REWARD DETECTED: +" + reward.getCount();
                 break;
-            default:
-                return;
         }
         // Todo: Remove this so it only shows important notifications but this is a good example of how to summon a dialog.
-        GameHUD.getInstance().addNotification(forgeNotification, 0.5f, 3f, 0.5f);
+        // GameHUD.getInstance().addNotification(forgeNotification, 0.5f, 3f, 0.5f);
     }
 
     private void refreshEditor() {
@@ -951,6 +936,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
 
     private void addGold(int goldCount) {
         gold += goldCount;
+        ArchipelagoData.getInstance().addGold(goldCount);
         onGoldChangeList.emit();
     }
 
@@ -1042,6 +1028,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
     public void addMaxLife(int count) {
         maxLife += count;
         life += count;
+        ArchipelagoData.getInstance().addMaxLife(count);
         onLifeTotalChangeList.emit();
     }
 
@@ -1057,6 +1044,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
     }
 
     public void addShards(int number) {
+        ArchipelagoData.getInstance().addShards(number);
         takeShards(-number);
     }
 
@@ -1338,6 +1326,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
         ItemData item = ItemListData.getItem(name);
         if (item == null)
             return false;
+        ArchipelagoData.getInstance().addItem(name);
         inventoryItems.add(item);
         if (updateEvent)
             AdventureQuestController.instance().updateItemReceived(item);
