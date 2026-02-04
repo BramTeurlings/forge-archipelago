@@ -169,13 +169,8 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
         for (PaperCard card : cards.toFlatList()) {
             archipelagoData.addCardUnlockedByName(card.getCardName());
         }
-        // Add basic lands so the player doesn't need to unlock them
-        archipelagoData.addCardUnlockedByName("Plains");
-        archipelagoData.addCardUnlockedByName("Forest");
-        archipelagoData.addCardUnlockedByName("Swamp");
-        archipelagoData.addCardUnlockedByName("Mountain");
-        archipelagoData.addCardUnlockedByName("Island");
-        archipelagoData.addCardUnlockedByName("Wastes");
+        // Add basic lands so the player doesn't need to unlock them and lock all regions initially
+        archipelagoData.setupFreshSaveFile();
 
         this.difficultyData.startingLife = difficultyData.startingLife;
         this.difficultyData.startingMoney = difficultyData.startingMoney;

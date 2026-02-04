@@ -35,8 +35,8 @@ public class PlayerSprite extends CharacterSprite {
         Current.player().onBlessing(() -> playerSpeedEquipmentModifier = Current.player().equipmentSpeed());
         Current.player().onEquipmentChanged(() -> playerSpeedEquipmentModifier = Current.player().equipmentSpeed());
 
-        // Set initial last legal position (will be 0,0 here)
-        lastLegalPosition.set(getX(), getY());
+        // Set initial last legal position
+        lastLegalPosition.set(Current.player().getWorldPosX(), Current.player().getWorldPosY());
     }
 
     private void updatePlayer() {

@@ -1,6 +1,5 @@
 package forge.adventure.data;
 
-import com.google.common.collect.Iterables;
 import forge.StaticData;
 import forge.adventure.scene.TileMapScene;
 import forge.adventure.stage.GameHUD;
@@ -9,7 +8,6 @@ import forge.card.CardEdition;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.item.PaperCard;
-import io.sentry.util.CollectionUtils;
 
 import java.util.*;
 
@@ -22,11 +20,14 @@ public class ArchipelagoData implements SaveFileContent {
     private final Iterable<CardEdition> allOrderedEditions = allEditions.getOrderedEditions();
     // Todo: This works fine for singleplayer even when updates come out but the fact that the list of all sets can grow will cause problems in Archipelago due to a variable amount of checks.
     private final Set<String> allCardSets = new HashSet<>();
+    // List of teleportation runes that we use to gate regions
+    // Todo: Move this and other static locations/checks/values to their own file.
+    private final Set<String> regionTeleportingRunes = new HashSet<>(Arrays.asList("White rune","Black rune","Blue rune","Red rune","Green rune"));
     // Actual user data we want to store
     private final Map<String, Long> completedTownInnEvents = new HashMap<>();
     private final Map<String, Long> completedTownQuests = new HashMap<>();
     private final Map<String, Long> cardsEarnedByRarity = new HashMap<>();
-    private final Map<String, Long> itemsGainedById = new HashMap<>();
+    private final Map<String, Long> itemsGainedByName = new HashMap<>();
     private final Map<String, Long> packsEarnedBySet = new HashMap<>();
     private final Set<String> cardsUnlockedByName = new HashSet<>();
     private final Set<String> setsUnlockedByCode = new HashSet<>();
@@ -94,6 +95,17 @@ public class ArchipelagoData implements SaveFileContent {
         return true;
     }
 
+    public void setupFreshSaveFile() {
+        this.addCardUnlockedByName("Plains");
+        this.addCardUnlockedByName("Forest");
+        this.addCardUnlockedByName("Swamp");
+        this.addCardUnlockedByName("Mountain");
+        this.addCardUnlockedByName("Island");
+        this.addCardUnlockedByName("Wastes");
+        lockedWorldRegionsByName.clear();
+        lockedWorldRegionsByName.addAll(new HashSet<>(Arrays.asList("white","blue","black","red","green")));
+    }
+
     public boolean checkCardUnlocked(PaperCard card) {
         String cardName = card.getName();
 
@@ -153,7 +165,22 @@ public class ArchipelagoData implements SaveFileContent {
     // Due to MapDialog.SetEffects() using just a name string to add items to the player's inventory, it's likely that the name is unique.
     // Todo: Verify that item names are unique.
     public void addItem(String itemName) {
-        itemsGainedById.merge(itemName, 1L, Long::sum);
+        if (regionTeleportingRunes.contains(itemName)) {
+            // Unlock the region based on the color found in the itemName
+            if (itemName.toLowerCase().contains("white")) {
+                unlockRegionByName("white");
+            } else if (itemName.toLowerCase().contains("blue")) {
+                unlockRegionByName("blue");
+            } else if (itemName.toLowerCase().contains("black")) {
+                unlockRegionByName("black");
+            } else if (itemName.toLowerCase().contains("red")) {
+                unlockRegionByName("red");
+            } else if (itemName.toLowerCase().contains("green")) {
+                unlockRegionByName("green");
+            }
+            System.out.println("FORGE_ARCHIPELAGO: REGION REWARD DETECTED: " + itemName);
+        }
+        itemsGainedByName.merge(itemName, 1L, Long::sum);
         System.out.println("FORGE_ARCHIPELAGO: ITEM REWARD DETECTED: " + itemName);
     }
 
@@ -249,26 +276,17 @@ public class ArchipelagoData implements SaveFileContent {
             allCardSets.addAll(newSetCodes);
         }
 
-        // Set up region data.
-        Set<String> _lockedWorldRegions = new HashSet<>();
-        // "waste" is always unlocked because this is the player's home location.
-        Set<String> _allWorldRegionsByName = new HashSet<>(Arrays.asList("white","blue","black","red","green"));
-
         // Load save data
         loadStringLongMap(data, "townEvents", completedTownInnEvents);
         loadStringLongMap(data, "townQuests", completedTownQuests);
         loadStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
-        loadStringLongMap(data, "items", itemsGainedById);
+        loadStringLongMap(data, "items", itemsGainedByName);
         loadStringLongMap(data, "packs", packsEarnedBySet);
         loadStringSet(data, "bossesDefeated", bossesDefeatedByName);
         loadStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
         loadStringSet(data, "cardsUnlocked", cardsUnlockedByName);
         loadStringSet(data, "setsUnlocked", setsUnlockedByCode);
-        loadStringSet(data, "lockedRegions", _lockedWorldRegions);
-
-        // Fill the local list of locked world regions
-        _allWorldRegionsByName.removeAll(_lockedWorldRegions);
-        lockedWorldRegionsByName.addAll(_allWorldRegionsByName);
+        loadStringSet(data, "lockedRegions", lockedWorldRegionsByName);
 
         totalGoldEarned = data.containsKey("totalGold") ? data.readInt("totalGold") : 0;
         totalExtraMaxLifeEarned = data.containsKey("extraLife") ? data.readInt("extraLife") : 0;
@@ -282,7 +300,7 @@ public class ArchipelagoData implements SaveFileContent {
         saveStringLongMap(data, "townEvents", completedTownInnEvents);
         saveStringLongMap(data, "townQuests", completedTownQuests);
         saveStringLongMap(data, "cardsByRarity", cardsEarnedByRarity);
-        saveStringLongMap(data, "items", itemsGainedById);
+        saveStringLongMap(data, "items", itemsGainedByName);
         saveStringLongMap(data, "packs", packsEarnedBySet);
         saveStringSet(data, "bossesDefeated", bossesDefeatedByName);
         saveStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
