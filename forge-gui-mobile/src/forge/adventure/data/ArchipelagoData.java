@@ -32,6 +32,7 @@ public class ArchipelagoData implements SaveFileContent {
     private final Set<String> setsUnlockedByCode = new HashSet<>();
     private final Set<String> bossesDefeatedByName = new HashSet<>();
     private final Set<String> miniBossesDefeatedByName = new HashSet<>();
+    private final Set<String> lockedWorldRegionsByName = new HashSet<>();
     private int totalGoldEarned = 0;
     private int totalExtraMaxLifeEarned = 0;
     private int totalShardsEarned = 0;
@@ -84,6 +85,13 @@ public class ArchipelagoData implements SaveFileContent {
             System.out.println(setUnlockedText);
             GameHUD.getInstance().addNotification(setUnlockedText, 0.5f, 3f, 0.5f);
         }
+    }
+
+    public boolean isBiomeUnlocked(String regionName) {
+        if (lockedWorldRegionsByName.contains(regionName)) {
+            return false;
+        }
+        return true;
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
@@ -179,6 +187,9 @@ public class ArchipelagoData implements SaveFileContent {
     public boolean addSetUnlockedByCode(String setCode) {
         return setsUnlockedByCode.add(setCode);
     }
+    public void unlockRegionByName(String regionName) {
+        lockedWorldRegionsByName.remove(regionName);
+    }
 
     // Helper functions for saving and loading
     private static void saveStringSet(SaveFileData parent, String key, Set<String> set) {
@@ -238,6 +249,11 @@ public class ArchipelagoData implements SaveFileContent {
             allCardSets.addAll(newSetCodes);
         }
 
+        // Set up region data.
+        Set<String> _lockedWorldRegions = new HashSet<>();
+        // "waste" is always unlocked because this is the player's home location.
+        Set<String> _allWorldRegionsByName = new HashSet<>(Arrays.asList("white","blue","black","red","green"));
+
         // Load save data
         loadStringLongMap(data, "townEvents", completedTownInnEvents);
         loadStringLongMap(data, "townQuests", completedTownQuests);
@@ -248,6 +264,11 @@ public class ArchipelagoData implements SaveFileContent {
         loadStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
         loadStringSet(data, "cardsUnlocked", cardsUnlockedByName);
         loadStringSet(data, "setsUnlocked", setsUnlockedByCode);
+        loadStringSet(data, "lockedRegions", _lockedWorldRegions);
+
+        // Fill the local list of locked world regions
+        _allWorldRegionsByName.removeAll(_lockedWorldRegions);
+        lockedWorldRegionsByName.addAll(_allWorldRegionsByName);
 
         totalGoldEarned = data.containsKey("totalGold") ? data.readInt("totalGold") : 0;
         totalExtraMaxLifeEarned = data.containsKey("extraLife") ? data.readInt("extraLife") : 0;
@@ -267,6 +288,7 @@ public class ArchipelagoData implements SaveFileContent {
         saveStringSet(data, "miniBossesDefeated", miniBossesDefeatedByName);
         saveStringSet(data, "cardsUnlocked", cardsUnlockedByName);
         saveStringSet(data, "setsUnlocked", setsUnlockedByCode);
+        saveStringSet(data, "lockedRegions", lockedWorldRegionsByName);
 
         data.store("totalGold", totalGoldEarned);
         data.store("extraLife", totalExtraMaxLifeEarned);
