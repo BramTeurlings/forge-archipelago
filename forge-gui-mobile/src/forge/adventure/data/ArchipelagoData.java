@@ -35,30 +35,38 @@ public class ArchipelagoData implements SaveFileContent {
         return instance == null ? instance = new ArchipelagoData() : instance;
     }
 
+    public boolean checkCardUnlocked(PaperCard card) {
+        if (card == null || card.getName() == null) {
+            // If we don't have a valid card or cardname, just ignore it meaning returning true in this case.
+            return true;
+        }
+        String cardName = card.getName();
+
+        // Card explicitly unlocked
+        if (cardsUnlockedByName.contains(cardName)) {
+            return true;
+        }
+
+        // Card sets unlocked
+        String setCode = card.getEdition();
+        if (setCode != null && setsUnlockedByCode.contains(setCode)) {
+            return true;
+        }
+
+        // Neither card nor set is unlocked
+        return false;
+    }
+
     public boolean checkDeckUnlocked(Deck selectedDeck) {
         // Todo: Uncomment this once our set unlock logic is in place
-//        if (selectedDeck == null) {
-//            return true;
-//        }
-//
-//        CardPool pool = selectedDeck.getAllCardsInASinglePool(true, true);
-//        for (PaperCard card : pool.toFlatList()) {
-//            String cardName = card.getName();
-//
-//            // Card explicitly unlocked
-//            if (cardsUnlockedByName.contains(cardName)) {
-//                continue;
-//            }
-//
-//            // Card sets unlocked
-//            String setCode = card.getEdition();
-//            if (setCode != null && setsUnlockedByCode.contains(setCode)) {
-//                continue;
-//            }
-//
-//            // Neither card nor set is unlocked
-//            return false;
-//        }
+        if (selectedDeck == null) {
+            return true;
+        }
+
+        CardPool pool = selectedDeck.getAllCardsInASinglePool(true, true);
+        for (PaperCard card : pool.toFlatList()) {
+            if (!checkCardUnlocked(card)) return false;
+        }
 
         return true;
     }
