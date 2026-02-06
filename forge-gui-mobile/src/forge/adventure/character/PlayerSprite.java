@@ -1,5 +1,6 @@
 package forge.adventure.character;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import forge.Forge;
 import forge.adventure.data.ArchipelagoData;
@@ -7,6 +8,7 @@ import forge.adventure.data.BiomeData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.scene.Scene;
 import forge.adventure.stage.GameStage;
+import forge.adventure.util.ArchipelagoUtil;
 import forge.adventure.util.Config;
 import forge.adventure.util.Current;
 import forge.adventure.world.World;
@@ -21,6 +23,8 @@ public class PlayerSprite extends CharacterSprite {
     private final Vector2 lastLegalPosition = new Vector2();
     private float playerSpeedModifier = 1f;
     private float playerSpeedEquipmentModifier = 1f;
+    private boolean showLockedRegionOverhead = false;
+    private String lastBlockedRegionName = null;
     GameStage gameStage;
 
     public PlayerSprite(GameStage gameStage) {
@@ -81,11 +85,11 @@ public class PlayerSprite extends CharacterSprite {
             return true;
         }
         BiomeData biome = world.getData().GetBiomes().get(biomeId);
+        lastBlockedRegionName = biome.name;
 
         return ArchipelagoData.getInstance().isBiomeUnlocked(biome.name);
     }
 
-    // Todo: Pretty sure this is where collision is handled
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -104,10 +108,16 @@ public class PlayerSprite extends CharacterSprite {
             if (!isInUnlockedBiome()) {
                 setPosition(lastLegalPosition.x, lastLegalPosition.y);
 
-                // Todo: Show feedback to the user that this region is locked. (Play sound effect or show dialog).
+                // Todo: Show feedback to the user that this region is locked.
+                // Drawn above the playersprite's position with a 90% opacity is the corresponding region's rune (Play sound effect and show corresponding rune above their head with 50% opaque cross through it).
+                showLockedRegionOverhead = true;
+
+                // Todo: Play sound?
+                // Forge.soundManager.playSound(SoundEffect.BLOCKED);
             } else {
                 // Update last known legal position
                 lastLegalPosition.set(getX(), getY());
+                showLockedRegionOverhead = false;
             }
 
             // If the player is blocked by an obstacle, and they haven't changed scenes,
@@ -122,6 +132,21 @@ public class PlayerSprite extends CharacterSprite {
         return !direction.isZero();
     }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+
+        if (shouldShowLockedRegionOverhead()) {
+            ArchipelagoUtil.drawLockedRegionOverhead(
+                    batch,
+                    getLastBlockedRegionName(),
+                    getX() + getWidth() / 2f,
+                    getY() + getHeight(),
+                    0.9f
+            );
+        }
+    }
+
     public void stop() {
         direction.setZero();
         setAnimation(AnimationTypes.Idle);
@@ -129,5 +154,13 @@ public class PlayerSprite extends CharacterSprite {
 
     public void setPosition(Vector2 oldPosition) {
         setPosition(oldPosition.x, oldPosition.y);
+    }
+
+    public String getLastBlockedRegionName() {
+        return lastBlockedRegionName;
+    }
+
+    public boolean shouldShowLockedRegionOverhead() {
+        return showLockedRegionOverhead;
     }
 }
