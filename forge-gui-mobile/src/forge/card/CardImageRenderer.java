@@ -1,13 +1,13 @@
 package forge.card;
 
 import static forge.assets.FSkin.getDefaultSkinFile;
-import static forge.card.CardRenderer.CROP_MULTIPLIER;
-import static forge.card.CardRenderer.isModernFrame;
+import static forge.card.CardRenderer.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import forge.ImageKeys;
+import forge.adventure.util.ArchipelagoUtil;
 import forge.assets.*;
 import forge.item.PaperCard;
 import forge.util.*;

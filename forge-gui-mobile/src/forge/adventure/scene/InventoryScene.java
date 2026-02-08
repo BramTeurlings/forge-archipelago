@@ -208,7 +208,7 @@ public class InventoryScene extends UIScene {
             return;
         ItemData data = itemLocation.get(selected).getRight();
         if (data == null) return;
-        Current.player().addShards(-data.shardsNeeded);
+        Current.player().takeShards(data.shardsNeeded);
         done();
         if (data.commandOnUse != null && !data.commandOnUse.isEmpty())
             ConsoleCommandInterpreter.getInstance().command(data.commandOnUse);
