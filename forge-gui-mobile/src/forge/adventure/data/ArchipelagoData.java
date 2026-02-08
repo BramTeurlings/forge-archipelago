@@ -181,6 +181,8 @@ public class ArchipelagoData implements SaveFileContent {
 
         receivedAmountOfSetUnlockChecks = 0;
         setUnlockChecksRestAmount = 0f;
+
+        loadAllAvailableSets();
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
@@ -368,13 +370,7 @@ public class ArchipelagoData implements SaveFileContent {
         }
     }
 
-    @Override
-    public void load(SaveFileData data) {
-        if (data == null) {
-            setupFreshSaveFile();
-            return;
-        }
-
+    private void loadAllAvailableSets() {
         Set<String> newSetCodes = new HashSet<>();
         for (CardEdition edition : allOrderedEditions) {
             newSetCodes.add(edition.getCode());
@@ -383,6 +379,16 @@ public class ArchipelagoData implements SaveFileContent {
             allCardSets.clear();
             allCardSets.addAll(newSetCodes);
         }
+    }
+
+    @Override
+    public void load(SaveFileData data) {
+        if (data == null) {
+            setupFreshSaveFile();
+            return;
+        }
+
+        loadAllAvailableSets();
 
         // Load save data
         loadStringLongMap(data, "townEvents", completedTownInnEvents);
