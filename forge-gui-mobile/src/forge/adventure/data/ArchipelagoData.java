@@ -200,7 +200,6 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkDeckUnlocked(Deck selectedDeck) {
-        // Todo: Uncomment this once our set unlock logic is in place
         if (selectedDeck == null) {
             return true;
         }

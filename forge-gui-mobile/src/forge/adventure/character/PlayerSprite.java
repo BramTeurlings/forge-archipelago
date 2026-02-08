@@ -107,15 +107,8 @@ public class PlayerSprite extends CharacterSprite {
             // Archipelago: Check if it's a legal biome for the player to be in, if not, refuse to update their position.
             if (!isInUnlockedBiome()) {
                 setPosition(lastLegalPosition.x, lastLegalPosition.y);
-
-                // Todo: Show feedback to the user that this region is locked.
-                // Drawn above the playersprite's position with a 90% opacity is the corresponding region's rune (Play sound effect and show corresponding rune above their head with 50% opaque cross through it).
                 showLockedRegionOverhead = true;
-
-                // Todo: Play sound?
-                // Forge.soundManager.playSound(SoundEffect.BLOCKED);
             } else {
-                // Update last known legal position
                 lastLegalPosition.set(getX(), getY());
                 showLockedRegionOverhead = false;
             }

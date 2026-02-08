@@ -623,7 +623,6 @@ public class CardRenderer {
     }
 
     public static void drawCard(Graphics g, IPaperCard pc, float x, float y, float w, float h, CardStackPosition pos) {
-        // Todo: Apparently this draws card art, ensure we draw the lock symbol overtop of the card. This should happen both in listViews, full cardImage views in shops, card rewards & player deck editor.
         Texture image = new RendererCachedCardImage(pc, false).getImage();
         final CardView card = CardView.getCardForUi(pc);
         float radius = (h - w) / 8;
