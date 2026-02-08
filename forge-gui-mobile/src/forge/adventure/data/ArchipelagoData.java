@@ -139,8 +139,7 @@ public class ArchipelagoData implements SaveFileContent {
         receivedAmountOfSetUnlockChecks++;
     }
 
-    // Todo: Rename "biome" to "region" after all current PRs are merged.
-    public boolean isBiomeUnlocked(String regionName) {
+    public boolean isRegionUnlocked(String regionName) {
         if (lockedWorldRegionsByName.contains(regionName)) {
             return false;
         }

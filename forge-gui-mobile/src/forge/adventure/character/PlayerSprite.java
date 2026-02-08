@@ -81,13 +81,13 @@ public class PlayerSprite extends CharacterSprite {
         int biomeId = World.highestBiome(world.getBiome(tileX, tileY));
         int maxBiomeIndex = world.getData().GetBiomes().size();
         if (maxBiomeIndex <= biomeId) {
-            // If the biome is not one we recognize, we should assume that the player is allowed to be there.
+            // If the region is not one we recognize, we should assume that the player is allowed to be there.
             return true;
         }
         BiomeData biome = world.getData().GetBiomes().get(biomeId);
         lastBlockedRegionName = biome.name;
 
-        return ArchipelagoData.getInstance().isBiomeUnlocked(biome.name);
+        return ArchipelagoData.getInstance().isRegionUnlocked(biome.name);
     }
 
     @Override
