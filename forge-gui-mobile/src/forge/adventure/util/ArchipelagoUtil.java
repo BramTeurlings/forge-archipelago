@@ -53,4 +53,37 @@ public class ArchipelagoUtil {
         g.fillRect(Color.BLACK, x, y, w, h);
         g.setAlphaComposite(oldalpha);
     }
+
+    private static TextureRegion getRegionRune(String regionName) {
+        return switch (regionName.toLowerCase()) {
+            case "white" -> Config.instance().getItemSprite("WhiteRune");
+            case "blue" -> Config.instance().getItemSprite("BlueRune");
+            case "black" -> Config.instance().getItemSprite("BlackRune");
+            case "red" -> Config.instance().getItemSprite("RedRune");
+            case "green" -> Config.instance().getItemSprite("GreenRune");
+            default -> null;
+        };
+    }
+
+    public static void drawLockedRegionOverhead(Batch batch, String regionName, float centerX, float baseY, float alpha) {
+        TextureRegion rune = getRegionRune(regionName);
+        if (rune == null)
+            return;
+
+        float size = 24f; // world-space size; tweak if needed
+        float x = centerX - size / 2f;
+        float y = baseY + 16f; // slightly above head
+
+        Color old = new Color(batch.getColor());
+
+        // Draw rune
+        batch.setColor(1f, 1f, 1f, alpha);
+        batch.draw(rune, x, y, size, size);
+
+        // Draw red cross overlay
+        TextureRegion cross = FSkinImage.WARNING.getTextureRegion();
+        batch.draw(cross, x, y, size / 2, size / 2);
+
+        batch.setColor(old);
+    }
 }

@@ -466,7 +466,7 @@ public class GameHUD extends Stage {
                     return;
                 if (data.shardsNeeded > Current.player().getShards())
                     return;
-                Current.player().addShards(-data.shardsNeeded);
+                Current.player().takeShards(data.shardsNeeded);
                 ConsoleCommandInterpreter.getInstance().command(data.commandOnUse);
                 AdventureQuestController.instance().updateItemUsed(data);
             }, "menu");
