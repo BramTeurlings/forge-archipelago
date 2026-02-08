@@ -69,7 +69,13 @@ public class ArchipelagoData implements SaveFileContent {
                 }
             }
             case TOWN_QUESTS_AND_EVENTS_DONE -> {
-                int totalTownQuestsAndEventsDone = completedTownInnEvents.size() + completedTownQuests.size();
+                int totalTownQuestsAndEventsDone = 0;
+                for (long count : completedTownInnEvents.values()) {
+                    totalTownQuestsAndEventsDone += (int) count;
+                }
+                for (long count : completedTownQuests.values()) {
+                    totalTownQuestsAndEventsDone += (int) count;
+                }
                 if (totalTownQuestsAndEventsDone > 0 && totalTownQuestsAndEventsDone % totalTownQuestsAndEventsBreakpoint == 0) {
                     unlockRandomRegion();
                 }
