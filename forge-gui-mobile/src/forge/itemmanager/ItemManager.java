@@ -806,6 +806,7 @@ public abstract class ItemManager<T extends InventoryItem> extends FContainer im
             return false;
         }
 
+        // Todo: This is where the "standard" filters we're looking for are applied.
         List<Predicate<? super T>> predicates = new ArrayList<>();
         for (ItemFilter<? extends T> filter : filters.get()) {
             if (!filter.isEmpty()) {
