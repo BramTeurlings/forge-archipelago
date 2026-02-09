@@ -44,6 +44,7 @@ public abstract class ItemFilter<T extends InventoryItem> {
     }
 
     public final <U extends InventoryItem> Predicate<U> buildPredicate(Class<U> genericType) {
+        // Todo: We need to implement the buildPredicate() function for our custom lock filter
         final Predicate<T> predicate = buildPredicate();
         return item -> {
             try {

@@ -35,6 +35,12 @@ public interface IPaperCard extends InventoryItem, Serializable {
     List<ICardFace> getAllFaces();
     String getCardImageKey();
     String getCardAltImageKey();
+    String getCardWSpecImageKey();
+    String getCardUSpecImageKey();
+    String getCardBSpecImageKey();
+    String getCardRSpecImageKey();
+    String getCardGSpecImageKey();
+    boolean isLocked();
 
     boolean isRebalanced();
 

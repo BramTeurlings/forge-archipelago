@@ -431,6 +431,10 @@ public class SFilterUtil {
         };
     }
 
+    public static Predicate<PaperCard> buildLockedFilter(Map<SItemManagerUtil.StatTypes, ? extends IButton> buttonMap) {
+        ArchipelagoData.getInstance
+    }
+
     public static Predicate<PaperCard> buildColorFilter(Map<SItemManagerUtil.StatTypes, ? extends IButton> buttonMap) {
         byte colors0 = 0;
 

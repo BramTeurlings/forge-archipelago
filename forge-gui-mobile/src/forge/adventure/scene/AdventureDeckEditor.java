@@ -1020,6 +1020,7 @@ public class AdventureDeckEditor extends FDeckEditor {
 
         @Override
         protected void addDefaultFilters() {
+            // Todo: Add card lock filter here
             this.addFilter(new CardColorFilter(this));
             this.addFilter(new CardTypeFilter(this));
         }
