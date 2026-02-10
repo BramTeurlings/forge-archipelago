@@ -64,7 +64,6 @@ public class PaperCard implements Comparable<IPaperCard>, InventoryItemFromSet, 
     private transient String displayName;
     private transient String sortableName;
     private transient boolean hasFlavorName;
-    // Todo: We have to add a boolean for locked here otherwise the locked filter has to depend on forge-gui-mobile.
     private transient boolean isLocked;
 
     @Override

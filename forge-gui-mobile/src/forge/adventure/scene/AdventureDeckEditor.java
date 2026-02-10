@@ -99,7 +99,6 @@ public class AdventureDeckEditor extends FDeckEditor {
         public ItemPool<PaperCard> getCardPool() {
             ItemPool<PaperCard> pool = new ItemPool<>(PaperCard.class);
             pool.addAll(Current.player().getCards());
-            // Todo: Ensure every PaperCard has an `isLocked` property.
             for (Map.Entry<PaperCard, Integer> card : pool) {
                 card.getKey().setLocked(!ArchipelagoData.getInstance().checkCardUnlocked(card.getKey()));
             }
@@ -1026,7 +1025,6 @@ public class AdventureDeckEditor extends FDeckEditor {
 
         @Override
         protected void addDefaultFilters() {
-            // Todo: Add card lock filter here
             this.addFilter(new CardColorFilter(this));
             this.addFilter(new CardTypeFilter(this));
             this.addFilter(new CardLockFilter(this));

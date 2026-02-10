@@ -76,7 +76,6 @@ public final class SItemManagerUtil {
         RATE_4    (FSkinProp.IMG_FAV4,    null, "lbl4starcards"),
         RATE_5    (FSkinProp.IMG_FAV5,    null, "lbl5starcards"),
 
-        // Todo: Translate the card lock in all languages.
         LOCKED    (FSkinProp.ICO_LOCK, null, "lblLockedCards");
 
         public final FSkinProp skinProp;
