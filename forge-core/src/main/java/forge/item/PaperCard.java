@@ -572,6 +572,10 @@ public class PaperCard implements Comparable<IPaperCard>, InventoryItemFromSet, 
         return isLocked;
     }
 
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
     @Override
     public boolean hasBackFace(){
         CardSplitType cst = this.rules.getSplitType();

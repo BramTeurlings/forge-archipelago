@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Align;
 import forge.Forge;
 import forge.Graphics;
 import forge.adventure.data.AdventureEventData;
+import forge.adventure.data.ArchipelagoData;
 import forge.adventure.data.ItemData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.util.AdventureEventController;
@@ -27,6 +28,7 @@ import forge.item.InventoryItem;
 import forge.item.PaperCard;
 import forge.itemmanager.*;
 import forge.itemmanager.filters.CardColorFilter;
+import forge.itemmanager.filters.CardLockFilter;
 import forge.itemmanager.filters.CardTypeFilter;
 import forge.menu.FDropDownMenu;
 import forge.menu.FMenuItem;
@@ -88,6 +90,10 @@ public class AdventureDeckEditor extends FDeckEditor {
         public ItemPool<PaperCard> getCardPool() {
             ItemPool<PaperCard> pool = new ItemPool<>(PaperCard.class);
             pool.addAll(Current.player().getCards());
+            // Todo: Ensure every PaperCard has an `isLocked` property.
+            for (Map.Entry<PaperCard, Integer> card : pool) {
+                card.getKey().setLocked(!ArchipelagoData.getInstance().checkCardUnlocked(card.getKey()));
+            }
             return pool;
         }
 
@@ -966,6 +972,7 @@ public class AdventureDeckEditor extends FDeckEditor {
             // Todo: Add card lock filter here
             this.addFilter(new CardColorFilter(this));
             this.addFilter(new CardTypeFilter(this));
+            this.addFilter(new CardLockFilter(this));
         }
 
         @Override

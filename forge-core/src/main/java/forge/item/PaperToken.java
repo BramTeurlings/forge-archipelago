@@ -221,6 +221,11 @@ public class PaperToken implements InventoryItemFromSet, IPaperCard {
         return getImageKey(false);
     }
 
+    @Override
+    public boolean isLocked() {
+        return false;
+    }
+
     // InventoryItem
     @Override
     public String getImageKey(boolean altState) {

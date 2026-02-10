@@ -25,6 +25,6 @@ public class CardLockFilter extends StatTypeFilter<PaperCard> {
 
     @Override
     protected final Predicate<PaperCard> buildPredicate() {
-        return SFilterUtil.buildColorFilter(buttonMap);
+        return SFilterUtil.buildLockedFilter(buttonMap);
     }
 }
