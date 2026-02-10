@@ -5,6 +5,7 @@ import forge.adventure.scene.TileMapScene;
 import forge.adventure.stage.GameHUD;
 import forge.adventure.util.*;
 import forge.card.CardEdition;
+import forge.card.CardLocking;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.item.PaperCard;
@@ -54,6 +55,9 @@ public class ArchipelagoData implements SaveFileContent {
 
     public ArchipelagoData() {
         instance = this;
+        CardLocking.setProvider(card ->
+                instance.checkCardUnlocked(card)
+        );
     }
 
     public static ArchipelagoData getInstance() {

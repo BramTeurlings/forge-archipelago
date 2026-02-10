@@ -432,7 +432,21 @@ public class SFilterUtil {
     }
 
     public static Predicate<PaperCard> buildLockedFilter(Map<SItemManagerUtil.StatTypes, ? extends IButton> buttonMap) {
-        ArchipelagoData.getInstance
+        return card -> {
+            if (buttonMap.get(StatTypes.LOCKED).isSelected()) {
+                if (card.isLocked()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (card.isLocked()) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
     }
 
     public static Predicate<PaperCard> buildColorFilter(Map<SItemManagerUtil.StatTypes, ? extends IButton> buttonMap) {
