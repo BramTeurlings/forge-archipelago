@@ -20,7 +20,7 @@ public class CardLockFilter extends StatTypeFilter<PaperCard> {
 
     @Override
     protected void buildWidget(Widget widget) {
-        addToggleButton(widget, StatTypes.LOCKED);;
+        addToggleButton(widget, StatTypes.LOCKED);
     }
 
     @Override
