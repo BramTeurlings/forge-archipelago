@@ -2,6 +2,7 @@ package forge.adventure.scene;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -48,6 +49,7 @@ public class NewGameScene extends MenuScene {
     private final Selector mode;
     private final Selector difficulty;
     private final Selector starterEdition;
+    private final CheckBox enableArchipelago;
     private final TextraLabel starterEditionLabel;
     private final Array<String> custom;
     private final TextraLabel colorLabel;
@@ -109,7 +111,8 @@ public class NewGameScene extends MenuScene {
             }
             break;
         }
-
+        // Todo: Implement this so it only works on Shandalar and doesn't crash
+        enableArchipelago = ui.findActor("enableArchipelago");
         starterEdition = ui.findActor("starterEdition");
         starterEditionLabel = ui.findActor("starterEditionL");
         originalEditionLabelText = starterEditionLabel.storedText;
