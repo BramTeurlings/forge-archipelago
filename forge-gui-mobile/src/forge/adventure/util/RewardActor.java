@@ -879,11 +879,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 Forge.getGraphics().getBatch().draw(item, pw / 4f, ph / 4f, pw / 2f, ph / 2f);
 
                 if (!archipelagoData.isSetUnlocked(reward.getDeck().getComment())){
-<<<<<<< HEAD
-                    ArchipelagoUtil.drawLockedCardOverlay(Forge.getGraphics().getBatch(), pw / 4f, ph/4f, pw, ph/2f);
-=======
-                    ArchipelagoUtil.drawLockedCardOverlay(batch, getWidth()/2, ph/2f, pw, ph/2f);
->>>>>>> 09ee294b86c (fix: properly align locks)
+                    ArchipelagoUtil.drawLockedCardOverlay(Forge.getGraphics().getBatch(), getWidth()/2, ph/2f, pw, ph/2f);
                 }
             }
         }
