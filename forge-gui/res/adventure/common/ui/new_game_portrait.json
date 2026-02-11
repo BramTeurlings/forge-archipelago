@@ -193,6 +193,15 @@
       "x": 96,
       "yOffset": 8
     },
+    {
+      "type": "Selector",
+      "name": "enableArchipelago",
+      "selectable": true,
+      "width": 168,
+      "height": 24,
+      "x": 96,
+      "yOffset": 8
+    },
 	{
       "type": "Selector",
       "name": "starterEdition",
