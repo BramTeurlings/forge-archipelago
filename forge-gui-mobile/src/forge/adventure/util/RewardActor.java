@@ -806,7 +806,7 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 batch.draw(item, pw / 4f, ph / 4f, pw / 2f, ph / 2f);
 
                 if (!archipelagoData.isSetUnlocked(reward.getDeck().getComment())){
-                    ArchipelagoUtil.drawLockedCardOverlay(batch, getWidth()/2, ph/2f, pw, ph/2f);
+                    drawLock(batch, getWidth()/2, ph/2f, pw, ph/2f);
                 }
             }
 
@@ -1160,9 +1160,13 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
                 batch.draw(icon, getOriginX() - scale / 2f, getOriginY() - scale / 2f, scale, scale);
             }
             if (!archipelagoData.checkCardUnlocked(reward.getCard())) {
-                ArchipelagoUtil.drawLockedCardOverlay(batch, x, -getHeight() / 2, width, getHeight());
+                drawLock(batch, x, -getHeight() / 2, width, getHeight());
             }
         }
+    }
+
+    private void drawLock(Batch batch, float x, float y, float width, float height) {
+        ArchipelagoUtil.drawLockedCardOverlay(batch, x, y, width, height);
     }
 
     private Graphics getGraphics() {
