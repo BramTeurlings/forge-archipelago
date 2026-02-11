@@ -158,7 +158,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
     public final Set<PaperCard> favoriteCards = new HashSet<>();
 
     public void create(String n, Deck startingDeck, boolean male, int race, int avatar, boolean isFantasy,
-                       boolean isUsingCustomDeck, DifficultyData difficultyData, AdventureModes adventureMode) {
+                       boolean isUsingCustomDeck, DifficultyData difficultyData, AdventureModes adventureMode, boolean archipelagoEnabled) {
         clear();
         this.adventureMode = adventureMode;
         announceFantasy = fantasyMode = isFantasy; //Set Chaos mode first.
@@ -176,7 +176,7 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
         ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
         // Todo: Check if archipelago was toggled on in the UI
         // Initial archipelago setup
-        archipelagoData.setupFreshSaveFile(true);
+        archipelagoData.setupFreshSaveFile(archipelagoEnabled);
         for (PaperCard card : cards.toFlatList()) {
             archipelagoData.addCardUnlockedByName(card.getCardName());
         }

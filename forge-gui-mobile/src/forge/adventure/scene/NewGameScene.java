@@ -49,7 +49,7 @@ public class NewGameScene extends MenuScene {
     private final Selector mode;
     private final Selector difficulty;
     private final Selector starterEdition;
-    private final CheckBox enableArchipelago;
+    private final Selector enableArchipelago;
     private final TextraLabel starterEditionLabel;
     private final Array<String> custom;
     private final TextraLabel colorLabel;
@@ -162,6 +162,11 @@ public class NewGameScene extends MenuScene {
 
         mode.setTextList(modeNames);
         mode.setCurrentIndex(constructedIndex != -1 ? constructedIndex : 0);
+
+        // Todo: There are issues here. Due to adding another listitem, when selecting a different game mode, the UI elements jump around and leave the screen > turn screen into scrollview.
+        //  Also add a label that explains that this is the randomizer/archipelago mode.
+        //  Optionally turn this into a checkbox.
+        enableArchipelago.setTextList(new String[]{"Default", "Archipelago"});
 
         AdventureModes initialMode = modes.get(mode.getCurrentIndex());
         updateModeSelectionState(initialMode);
@@ -344,7 +349,7 @@ public class NewGameScene extends MenuScene {
                     getStartingColor(),
                     Config.instance().getConfigData().difficulties[difficulty.getCurrentIndex()],
                     modes.get(mode.getCurrentIndex()), colorId.getCurrentIndex(),
-                    getStartingEdition(), 0);
+                    getStartingEdition(), 0, archipelagoMode);
             GamePlayerUtil.getGuiPlayer().setName(selectedName.getText());
             SoundSystem.instance.changeBackgroundTrack();
             WorldStage.getInstance().enterSpawnPOI();
