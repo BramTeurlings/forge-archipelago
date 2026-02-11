@@ -165,9 +165,9 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
 
         cards.addAllFlat(deck.getAllCardsInASinglePool(true, true).toFlatList());
         ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
-        // Add basic lands so the player doesn't need to unlock them and lock all regions initially
-        archipelagoData.setupFreshSaveFile();
-        // Add all cards to the valid pool of cards in ArchipelagoData
+        // Todo: Check if archipelago was toggled on in the UI
+        // Initial archipelago setup
+        archipelagoData.setupFreshSaveFile(true);
         for (PaperCard card : cards.toFlatList()) {
             archipelagoData.addCardUnlockedByName(card.getCardName());
         }

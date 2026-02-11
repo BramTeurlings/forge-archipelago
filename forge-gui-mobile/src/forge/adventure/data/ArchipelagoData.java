@@ -15,6 +15,7 @@ import java.util.*;
 // Persists and loads data inside/from the user's save file
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
+    private boolean isArchipelagoEnabled = false;
 
     // Data we need from Forge
     private final CardEdition.Collection allEditions = StaticData.instance().getEditions();
@@ -152,8 +153,12 @@ public class ArchipelagoData implements SaveFileContent {
         return true;
     }
 
+    public boolean isArchipelagoEnabled() {
+        return isArchipelagoEnabled;
+    }
+
     // Keep this updated to reset any sets/maps/variables
-    public void setupFreshSaveFile() {
+    public void setupFreshSaveFile(boolean enableArchipelago) {
         cardsUnlockedByName.clear();
         this.addCardUnlockedByName("Plains");
         this.addCardUnlockedByName("Forest");
@@ -181,6 +186,8 @@ public class ArchipelagoData implements SaveFileContent {
 
         receivedAmountOfSetUnlockChecks = 0;
         setUnlockChecksRestAmount = 0f;
+
+        isArchipelagoEnabled = enableArchipelago;
 
         loadAllAvailableSets();
     }
@@ -384,10 +391,11 @@ public class ArchipelagoData implements SaveFileContent {
     @Override
     public void load(SaveFileData data) {
         if (data == null) {
-            setupFreshSaveFile();
+            // No archipelago data found, treat archipelago as inactive for this save file.
+            setupFreshSaveFile(false);
             return;
         }
-
+        isArchipelagoEnabled = true;
         loadAllAvailableSets();
 
         // Load save data

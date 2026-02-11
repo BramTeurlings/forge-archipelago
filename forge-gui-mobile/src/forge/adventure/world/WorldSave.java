@@ -175,7 +175,10 @@ public class WorldSave {
                 SaveFileData player = currentSave.player.save();
                 SaveFileData world = currentSave.world.save();
                 SaveFileData worldStage = WorldStage.getInstance().save();
-                SaveFileData archipelago = ArchipelagoData.getInstance().save();
+                SaveFileData archipelago = null;
+                if (ArchipelagoData.getInstance().isArchipelagoEnabled()) {
+                    archipelago = ArchipelagoData.getInstance().save();
+                }
                 SaveFileData poiChanges = currentSave.pointOfInterestChanges.save();
 
                 String message = getExceptionMessage(player, world, worldStage, poiChanges);
@@ -192,7 +195,9 @@ public class WorldSave {
                 mainData.store("world", world);
                 mainData.store("worldStage", worldStage);
                 mainData.store("pointOfInterestChanges", poiChanges);
-                mainData.store("archipelago", archipelago);
+                if (archipelago != null) {
+                    mainData.store("archipelago", archipelago);
+                }
 
                 if (mainData.readString("IOException") != null) {
                     oos.close();
