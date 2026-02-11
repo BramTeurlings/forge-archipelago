@@ -145,11 +145,11 @@ public class ArchipelagoData implements SaveFileContent {
         receivedAmountOfSetUnlockChecks++;
     }
 
-    public  boolean isSetUnlocked(String setName){
-        if (setName == null || !allCardSets.contains(setName)){
+    public  boolean isSetUnlocked(String setCode){
+        if (setCode == null || !allCardSets.contains(setCode)){
             return false;
         }
-        return setsUnlockedByCode.contains(setName);
+        return setsUnlockedByCode.contains(setCode);
     }
     public boolean isRegionUnlocked(String regionName) {
         if (lockedWorldRegionsByName.contains(regionName)) {
@@ -205,7 +205,8 @@ public class ArchipelagoData implements SaveFileContent {
 
         // Card sets unlocked
         String setCode = card.getEdition();
-        if (setCode != null && setsUnlockedByCode.contains(setCode)) {
+
+        if (isSetUnlocked(setCode)) {
             return true;
         }
 
