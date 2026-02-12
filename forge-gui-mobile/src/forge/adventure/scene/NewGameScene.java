@@ -2,13 +2,11 @@ package forge.adventure.scene;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import com.github.tommyettinger.textra.TextraLabel;
@@ -40,6 +38,8 @@ public class NewGameScene extends MenuScene {
     TextField selectedName;
     ColorSet[] colorIds;
     CardEdition[] editionIds;
+    ScrollPane scrollPane;
+    private final Table settingGroup;
     private final Image avatarImage;
     private int avatarIndex = 0;
     private final Selector race;
@@ -49,9 +49,14 @@ public class NewGameScene extends MenuScene {
     private final Selector difficulty;
     private final Selector starterEdition;
     private final Selector enableArchipelago;
-    private final TextraLabel starterEditionLabel;
     private final Array<String> custom;
+    private final TextraLabel starterEditionLabel;
+    private final TextraLabel raceLabel;
+    private final TextraLabel genderLabel;
+    private final TextraLabel difficultyLabel;
     private final TextraLabel colorLabel;
+    private final TextraLabel modeLabel;
+    private final TextraLabel enableArchipelagoLabel;
     private final ImageButton difficultyHelp;
     private DialogData difficultySummary;
     private final ImageButton modeHelp;
@@ -61,8 +66,9 @@ public class NewGameScene extends MenuScene {
     private final Array<AdventureModes> modes = new Array<>();
 
     private NewGameScene() {
-
         super(Forge.isLandscapeMode() ? "ui/new_game.json" : "ui/new_game_portrait.json");
+
+        settingGroup = new Table();
         gender = ui.findActor("gender");
         selectedName = ui.findActor("nameField");
         generateName();
@@ -154,7 +160,7 @@ public class NewGameScene extends MenuScene {
         // Todo: There are issues here. Due to adding another listitem, when selecting a different game mode, the UI elements jump around and leave the screen > turn screen into scrollview.
         //  Also add a label that explains that this is the randomizer/archipelago mode.
         //  Optionally turn this into a checkbox.
-        enableArchipelago.setTextList(new String[]{"Default", "Archipelago"});
+        enableArchipelago.setTextList(new String[]{"Disabled", "Enabled", "Archipelago"});
 
         AdventureModes initialMode = modes.get(mode.getCurrentIndex());
         starterEdition.setVisible(initialMode == AdventureModes.Standard);
@@ -224,6 +230,35 @@ public class NewGameScene extends MenuScene {
                 showModeHelp();
             }
         });
+
+        raceLabel = ui.findActor("raceL");
+        genderLabel = ui.findActor("genderL");
+        difficultyLabel = ui.findActor("difficultyL");
+        modeLabel = ui.findActor("modeL");
+        enableArchipelagoLabel = ui.findActor("enableArchipelagoL");
+
+        addSelectorToScrollGroup(raceLabel, race, null);
+        addSelectorToScrollGroup(genderLabel, gender, null);
+        addSelectorToScrollGroup(difficultyLabel, difficulty, difficultyHelp);
+        addSelectorToScrollGroup(colorLabel, colorId, null);
+        addSelectorToScrollGroup(modeLabel, mode, modeHelp);
+        addSelectorToScrollGroup(enableArchipelagoLabel, enableArchipelago, null);
+        addSelectorToScrollGroup(starterEditionLabel, starterEdition, null);
+
+        scrollPane = ui.findActor("selectorScroll");
+        scrollPane.setActor(settingGroup);
+        addToSelectable(settingGroup);
+    }
+
+    void addSelectorToScrollGroup(TextraLabel label, Selector selector, ImageButton helpLabel) {
+        settingGroup.row();
+        settingGroup.add(label).left().padLeft(19);
+        if (helpLabel != null) {
+            settingGroup.add(helpLabel).padRight(10);
+        } else {
+            settingGroup.add().width(16);
+        }
+        settingGroup.add(selector).expandX().right().fillX().padRight(40);
     }
 
     // class field
@@ -287,7 +322,7 @@ public class NewGameScene extends MenuScene {
                     colorIds[custom.isEmpty() || !AdventureModes.Custom.equals(modes.get(mode.getCurrentIndex())) ? colorId.getCurrentIndex() : 0],
                     Config.instance().getConfigData().difficulties[difficulty.getCurrentIndex()],
                     modes.get(mode.getCurrentIndex()), colorId.getCurrentIndex(),
-                    editionIds[starterEdition.getCurrentIndex()], 0 /*maybe replace with enum*/, enableArchipelago.getCurrentIndex() == 1 /*Todo: Replace this with a proper boolean that's smartly defined.*/);
+                    editionIds[starterEdition.getCurrentIndex()], 0 /*maybe replace with enum*/, enableArchipelago.getCurrentIndex() >= 1 /*Todo: Replace this with a proper boolean that's smartly defined.*/);
             GamePlayerUtil.getGuiPlayer().setName(selectedName.getText());
             SoundSystem.instance.changeBackgroundTrack();
             WorldStage.getInstance().enterSpawnPOI();
