@@ -92,6 +92,15 @@
       "x": 16,
       "yOffset": 8
     },
+    {
+      "type": "Label",
+      "name" : "enableArchipelagoL",
+      "text": "[BLACK]tr(lblMode)",
+      "width": 128,
+      "height": 16,
+      "x": 75,
+      "yOffset": 8
+    },
 	{
       "type": "ImageButton",
       "name": "modeHelp",
