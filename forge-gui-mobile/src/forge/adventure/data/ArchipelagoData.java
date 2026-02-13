@@ -63,6 +63,7 @@ public class ArchipelagoData implements SaveFileContent {
 
     // Todo: Add more checks for other things the player can do such as earn gold, shards, defeating bosses etc.
     private void updatePlayerChecks(ARCHIPELAGO_CHECK_TYPES type) {
+        if (!isArchipelagoEnabled) return;
         switch (type) {
             case BATTLES_WON -> {
                 if (totalBattlesWon > 0 && totalBattlesWon % totalBattlesWonBreakpoint == 0) {
@@ -147,6 +148,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean isRegionUnlocked(String regionName) {
+        if (!isArchipelagoEnabled) return true;
         if (lockedWorldRegionsByName.contains(regionName)) {
             return false;
         }
@@ -193,6 +195,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
+        if (!isArchipelagoEnabled) return true;
         if (card == null || card.getName() == null) {
             // If we don't have a valid card or cardname, just ignore it meaning returning true in this case.
             return true;
@@ -215,6 +218,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkDeckUnlocked(Deck selectedDeck) {
+        if (!isArchipelagoEnabled) return true;
         if (selectedDeck == null) {
             return true;
         }
