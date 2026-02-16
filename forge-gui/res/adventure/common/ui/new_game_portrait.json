@@ -22,10 +22,10 @@
       "type": "Scroll",
       "name" : "selectorScroll",
       "style": "nobg",
-      "x": 56,
-      "y": 110,
+      "x": -3,
+      "y": 168,
       "width": 280,
-      "height": 145
+      "height": 174
     },
     {
       "type": "Label",
