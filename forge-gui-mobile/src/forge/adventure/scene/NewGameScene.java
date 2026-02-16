@@ -6,11 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import com.github.tommyettinger.textra.TextraLabel;
 import forge.Forge;
+import forge.adventure.data.ArchipelagoMode;
 import forge.adventure.data.DialogData;
 import forge.adventure.data.DifficultyData;
 import forge.adventure.data.HeroListData;
@@ -157,9 +157,6 @@ public class NewGameScene extends MenuScene {
         mode.setTextList(modeNames);
         mode.setCurrentIndex(constructedIndex != -1 ? constructedIndex : 0);
 
-        // Todo: There are issues here. Due to adding another listitem, when selecting a different game mode, the UI elements jump around and leave the screen > turn screen into scrollview.
-        //  Also add a label that explains that this is the randomizer/archipelago mode.
-        //  Optionally turn this into a checkbox.
         enableArchipelago.setTextList(new String[]{"Disabled", "Enabled", "Archipelago"});
 
         AdventureModes initialMode = modes.get(mode.getCurrentIndex());
@@ -312,6 +309,14 @@ public class NewGameScene extends MenuScene {
         if (selectedName.getText().isEmpty()) {
             generateName();
         }
+        ArchipelagoMode archipelagoMode;
+        if (enableArchipelago.getCurrentIndex() == 1) {
+            archipelagoMode = ArchipelagoMode.solo_randomizer;
+        } else if (enableArchipelago.getCurrentIndex() == 2) {
+            archipelagoMode = ArchipelagoMode.networked_archipelago;
+        } else {
+            archipelagoMode = ArchipelagoMode.disabled;
+        }
         Runnable runnable = () -> {
             started = false;
             //FModel.getPreferences().setPref(ForgePreferences.FPref.UI_ENABLE_MUSIC, false);
@@ -322,7 +327,7 @@ public class NewGameScene extends MenuScene {
                     colorIds[custom.isEmpty() || !AdventureModes.Custom.equals(modes.get(mode.getCurrentIndex())) ? colorId.getCurrentIndex() : 0],
                     Config.instance().getConfigData().difficulties[difficulty.getCurrentIndex()],
                     modes.get(mode.getCurrentIndex()), colorId.getCurrentIndex(),
-                    editionIds[starterEdition.getCurrentIndex()], 0 /*maybe replace with enum*/, enableArchipelago.getCurrentIndex() >= 1 /*Todo: Replace this with a proper boolean that's smartly defined.*/);
+                    editionIds[starterEdition.getCurrentIndex()], 0 /*maybe replace with enum*/, archipelagoMode);
             GamePlayerUtil.getGuiPlayer().setName(selectedName.getText());
             SoundSystem.instance.changeBackgroundTrack();
             WorldStage.getInstance().enterSpawnPOI();
