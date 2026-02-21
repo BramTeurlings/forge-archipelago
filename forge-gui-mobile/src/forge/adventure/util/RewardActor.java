@@ -805,8 +805,10 @@ public class RewardActor extends Actor implements Disposable, ImageFetcher.Callb
             } else {
                 batch.draw(item, pw / 4f, ph / 4f, pw / 2f, ph / 2f);
 
-                if (!archipelagoData.isSetUnlocked(reward.getDeck().getComment())){
-                    ArchipelagoUtil.drawLockedCardOverlay(batch, getWidth()/2, ph/2f, pw, ph/2f);
+                if (reward != null && reward.getDeck() != null && reward.getDeck().getComment() != null) {
+                    if (!archipelagoData.isSetUnlocked(reward.getDeck().getComment())){
+                        ArchipelagoUtil.drawLockedCardOverlay(batch, getWidth()/2, ph/2f, pw, ph/2f);
+                    }
                 }
             }
 
