@@ -164,7 +164,6 @@ public class AdventurePlayer implements Serializable, SaveFileContent {
 
         cards.addAllFlat(deck.getAllCardsInASinglePool(true, true).toFlatList());
         ArchipelagoData archipelagoData = ArchipelagoData.getInstance();
-        // Todo: Check if archipelago was toggled on in the UI
         // Initial archipelago setup
         archipelagoData.setupFreshSaveFile(archipelagoMode);
         for (PaperCard card : cards.toFlatList()) {
