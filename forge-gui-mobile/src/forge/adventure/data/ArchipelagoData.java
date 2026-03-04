@@ -15,6 +15,7 @@ import java.util.*;
 // Persists and loads data inside/from the user's save file
 public class ArchipelagoData implements SaveFileContent {
     private static ArchipelagoData instance = null;
+    private ArchipelagoMode archipelagoMode = ArchipelagoMode.disabled;
 
     // Data we need from Forge
     private final CardEdition.Collection allEditions = StaticData.instance().getEditions();
@@ -62,6 +63,7 @@ public class ArchipelagoData implements SaveFileContent {
 
     // Todo: Add more checks for other things the player can do such as earn gold, shards, defeating bosses etc.
     private void updatePlayerChecks(ARCHIPELAGO_CHECK_TYPES type) {
+        if (archipelagoMode == ArchipelagoMode.disabled) return;
         switch (type) {
             case BATTLES_WON -> {
                 if (totalBattlesWon > 0 && totalBattlesWon % totalBattlesWonBreakpoint == 0) {
@@ -154,14 +156,19 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean isRegionUnlocked(String regionName) {
+        if (archipelagoMode == ArchipelagoMode.disabled) return true;
         if (lockedWorldRegionsByName.contains(regionName)) {
             return false;
         }
         return true;
     }
 
+    public boolean isArchipelagoEnabled() {
+        return archipelagoMode != ArchipelagoMode.disabled;
+    }
+
     // Keep this updated to reset any sets/maps/variables
-    public void setupFreshSaveFile() {
+    public void setupFreshSaveFile(ArchipelagoMode archipelagoMode) {
         cardsUnlockedByName.clear();
         this.addCardUnlockedByName("Plains");
         this.addCardUnlockedByName("Forest");
@@ -190,10 +197,13 @@ public class ArchipelagoData implements SaveFileContent {
         receivedAmountOfSetUnlockChecks = 0;
         setUnlockChecksRestAmount = 0f;
 
+        this.archipelagoMode = archipelagoMode;
+
         loadAllAvailableSets();
     }
 
     public boolean checkCardUnlocked(PaperCard card) {
+        if (archipelagoMode == ArchipelagoMode.disabled) return true;
         if (card == null || card.getName() == null) {
             // If we don't have a valid card or cardname, just ignore it meaning returning true in this case.
             return true;
@@ -217,6 +227,7 @@ public class ArchipelagoData implements SaveFileContent {
     }
 
     public boolean checkDeckUnlocked(Deck selectedDeck) {
+        if (archipelagoMode == ArchipelagoMode.disabled) return true;
         if (selectedDeck == null) {
             return true;
         }
@@ -393,10 +404,10 @@ public class ArchipelagoData implements SaveFileContent {
     @Override
     public void load(SaveFileData data) {
         if (data == null) {
-            setupFreshSaveFile();
+            // No archipelago data found, treat archipelago as inactive for this save file.
+            setupFreshSaveFile(ArchipelagoMode.disabled);
             return;
         }
-
         loadAllAvailableSets();
 
         // Load save data
@@ -417,6 +428,7 @@ public class ArchipelagoData implements SaveFileContent {
         totalGoldEarned = data.containsKey("totalGold") ? data.readInt("totalGold") : 0;
         totalExtraMaxLifeEarned = data.containsKey("extraLife") ? data.readInt("extraLife") : 0;
         totalShardsEarned = data.containsKey("shards") ? data.readInt("shards") : 0;
+        archipelagoMode = ArchipelagoMode.values()[data.containsKey("archipelagoMode") ? data.readInt("archipelagoMode") : 0];
     }
 
     @Override
@@ -440,6 +452,7 @@ public class ArchipelagoData implements SaveFileContent {
         data.store("totalGold", totalGoldEarned);
         data.store("extraLife", totalExtraMaxLifeEarned);
         data.store("shards", totalShardsEarned);
+        data.store("archipelagoMode", archipelagoMode.ordinal());
 
         return data;
     }
