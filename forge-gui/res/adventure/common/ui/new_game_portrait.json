@@ -102,6 +102,16 @@
       "yOffset": 8
     },
     {
+      "type": "ImageButton",
+      "name": "archipelagoHelp",
+      "style": "roundhint",
+      "selectable": true,
+      "width": 12,
+      "height": 15,
+      "x": 80,
+      "yOffset": -17
+    },
+    {
       "type": "Label",
       "name" : "enableArchipelagoL",
       "text": "[BLACK]tr(lblArchipelagoMode)",

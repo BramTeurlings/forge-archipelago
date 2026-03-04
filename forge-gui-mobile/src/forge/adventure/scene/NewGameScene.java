@@ -62,11 +62,14 @@ public class NewGameScene extends MenuScene {
     private DialogData difficultySummary;
     private final ImageButton modeHelp;
     private DialogData modeSummary;
+    private final ImageButton archipelagoHelp;
+    private DialogData archipelagoSummary;
     private final Random rand = new Random();
     private String originalEditionLabelText;
     private Array<String> originalEditionNames;
 
     private final Array<AdventureModes> modes = new Array<>();
+    private final Array<ArchipelagoMode> archipelagoModes = new Array<>();
 
     private NewGameScene() {
         super(Forge.isLandscapeMode() ? "ui/new_game.json" : "ui/new_game_portrait.json");
@@ -78,6 +81,7 @@ public class NewGameScene extends MenuScene {
         avatarImage = ui.findActor("avatarPreview");
         mode = ui.findActor("mode");
         modeHelp = ui.findActor("modeHelp");
+        archipelagoHelp = ui.findActor("archipelagoHelp");
         colorLabel = ui.findActor("colorIdL");
         String colorIdLabel = colorLabel.storedText;
         String deckLabel = "[BLACK]" + Forge.getLocalizer().getMessage("lblDeck") + ":";
@@ -246,6 +250,11 @@ public class NewGameScene extends MenuScene {
                 showModeHelp();
             }
         });
+        archipelagoHelp.addListener(new ClickListener() {
+            public void clicked(InputEvent e, float x, float y) {
+                archipelagoHelp();
+            }
+        });
 
         raceLabel = ui.findActor("raceL");
         genderLabel = ui.findActor("genderL");
@@ -258,7 +267,7 @@ public class NewGameScene extends MenuScene {
         addSelectorToScrollGroup(difficultyLabel, difficulty, difficultyHelp);
         addSelectorToScrollGroup(colorLabel, colorId, null);
         addSelectorToScrollGroup(modeLabel, mode, modeHelp);
-        addSelectorToScrollGroup(enableArchipelagoLabel, enableArchipelago, null);
+        addSelectorToScrollGroup(enableArchipelagoLabel, enableArchipelago, archipelagoHelp);
         addSelectorToScrollGroup(starterEditionLabel, starterEdition, null);
 
         scrollPane = ui.findActor("selectorScroll");
@@ -373,10 +382,8 @@ public class NewGameScene extends MenuScene {
             generateName();
         }
         ArchipelagoMode archipelagoMode;
-        if (enableArchipelago.getCurrentIndex() == 1) {
-            archipelagoMode = ArchipelagoMode.solo_randomizer;
-        } else if (enableArchipelago.getCurrentIndex() == 2) {
-            archipelagoMode = ArchipelagoMode.networked_archipelago;
+        if (enableArchipelago.getCurrentIndex() < ArchipelagoMode.values().length && enableArchipelago.getCurrentIndex() > -1) {
+            archipelagoMode = ArchipelagoMode.values()[enableArchipelago.getCurrentIndex()];
         } else {
             archipelagoMode = ArchipelagoMode.disabled;
         }
@@ -507,6 +514,37 @@ public class NewGameScene extends MenuScene {
         loadDialog(difficultySummary);
     }
 
+    private void archipelagoHelp() {
+
+        ArchipelagoMode selectedMode = ArchipelagoMode.values()[enableArchipelago.getCurrentIndex()];
+        DifficultyData selectedDifficulty = Config.instance().getConfigData().difficulties[difficulty.getCurrentIndex()];
+
+        archipelagoSummary = new DialogData();
+        archipelagoSummary.name = "Summary";
+
+        StringBuilder summaryText = new StringBuilder();
+        switch (selectedMode) {
+            case disabled:
+                summaryText.append("Randomizer: Disabled\n\nNo changes, the regular Adventure mode experience.\n\n");
+                break;
+            case solo_randomizer:
+                summaryText.append("Randomizer: Solo Randomizer\n\nAll cards outside of your starting deck will be locked by default. Biomes, cards and equipment unlocks are randomized and can be unlocked by completing various objectives in the game.\n\n");
+                break;
+            case networked_archipelago:
+                summaryText.append("Randomizer: Networked Archipelago\n\nAs 'Solo Randomizer' except that unlocks will be distributed through an online Archipelago server. More info at https://archipelago.gg.\nPlease ensure your Archipelago client configured and connected.\nWARNING: Archipelago support is currently unavailable.\n\n");
+                break;
+            default:
+                summaryText.append("No summary available for this randomizer.");
+                break;
+        }
+
+        DialogData dismiss = new DialogData();
+        dismiss.name = "OK";
+        archipelagoSummary.text = summaryText.toString();
+        archipelagoSummary.options = new DialogData[1];
+        archipelagoSummary.options[0] = dismiss;
+        loadDialog(archipelagoSummary);
+    }
     private void showModeHelp() {
 
         Localizer localizer = Forge.getLocalizer();
