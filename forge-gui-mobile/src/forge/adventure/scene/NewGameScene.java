@@ -446,7 +446,6 @@ public class NewGameScene extends MenuScene {
     private void archipelagoHelp() {
 
         ArchipelagoMode selectedMode = ArchipelagoMode.values()[enableArchipelago.getCurrentIndex()];
-        DifficultyData selectedDifficulty = Config.instance().getConfigData().difficulties[difficulty.getCurrentIndex()];
 
         archipelagoSummary = new DialogData();
         archipelagoSummary.name = "Summary";
