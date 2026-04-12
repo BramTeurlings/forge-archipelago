@@ -72,6 +72,8 @@ public class NewGameScene extends MenuScene {
     private final Array<AdventureModes> modes = new Array<>();
     private final Array<ArchipelagoMode> archipelagoModes = new Array<>();
 
+    private boolean isShandalar;
+
     private NewGameScene() {
         super(Forge.isLandscapeMode() ? "ui/new_game.json" : "ui/new_game_portrait.json");
 
@@ -123,7 +125,7 @@ public class NewGameScene extends MenuScene {
             break;
         }
 
-        boolean isShandalar = Objects.equals(
+        isShandalar = Objects.equals(
                 Config.instance().getSettingData().plane,
                 "Shandalar"
         );
@@ -278,7 +280,7 @@ public class NewGameScene extends MenuScene {
         addSelectorToScrollGroup(difficultyLabel, difficulty, difficultyHelp);
         addSelectorToScrollGroup(colorLabel, colorId, null);
         addSelectorToScrollGroup(modeLabel, mode, modeHelp);
-        if(isShandalar){
+        if (isShandalar) {
             addSelectorToScrollGroup(enableArchipelagoLabel, enableArchipelago, archipelagoHelp);
         }
         addSelectorToScrollGroup(starterEditionLabel, starterEdition, null);
@@ -395,7 +397,7 @@ public class NewGameScene extends MenuScene {
             generateName();
         }
         ArchipelagoMode archipelagoMode;
-        if (enableArchipelago.getCurrentIndex() < ArchipelagoMode.values().length && enableArchipelago.getCurrentIndex() > -1) {
+        if (isShandalar && enableArchipelago.getCurrentIndex() < ArchipelagoMode.values().length && enableArchipelago.getCurrentIndex() > -1) {
             archipelagoMode = ArchipelagoMode.values()[enableArchipelago.getCurrentIndex()];
         } else {
             archipelagoMode = ArchipelagoMode.disabled;
