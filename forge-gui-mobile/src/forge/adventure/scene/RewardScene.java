@@ -17,6 +17,8 @@ import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import forge.Forge;
 import forge.adventure.character.ShopActor;
+import forge.adventure.data.ArchipelagoData;
+import forge.adventure.data.ArchipelagoMode;
 import forge.haptic.HapticEngine;
 import forge.localinstance.properties.ForgePreferences.FPref;
 import forge.adventure.data.RewardData;
