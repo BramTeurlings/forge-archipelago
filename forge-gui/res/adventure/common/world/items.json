@@ -404,17 +404,6 @@
     "iconName": "r"
   },
   {
-    "name": "Phoenix",
-    "description": "Draft a Phoenix card, or conjure one to be cast with mana of any color",
-    "equipmentSlot": "Neck",
-    "iconName": "PhoenixCharm",
-    "effect": {
-      "startBattleWithCardInCommandZone": [
-        "Phoenix Charm"
-      ]
-    }
-  },
-  {
     "name": "Liliana's Stone",
     "description": "A small black gemstone recovered after your battle with Liliana",
     "iconName": "b"
