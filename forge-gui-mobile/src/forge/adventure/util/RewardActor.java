@@ -34,7 +34,7 @@ import com.github.tommyettinger.textra.TypingLabel;
 import forge.Forge;
 import forge.ImageKeys;
 import forge.StaticData;
-import forge.adventure.data.ArchipelagoData;
+import forge.adventure.archipelago.ArchipelagoData;
 import forge.adventure.data.ItemData;
 import forge.adventure.player.AdventurePlayer;
 import forge.adventure.scene.RewardScene;
