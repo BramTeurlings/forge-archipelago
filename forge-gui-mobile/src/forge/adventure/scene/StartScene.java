@@ -10,6 +10,7 @@ import com.github.tommyettinger.textra.TextraButton;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import forge.Forge;
+import forge.adventure.archipelago.Archipelago;
 import forge.adventure.archipelago.ArchipelagoData;
 import forge.adventure.archipelago.ArchipelagoMode;
 import forge.adventure.stage.GameHUD;
@@ -329,6 +330,7 @@ public class StartScene extends UIScene {
     }
 
     public boolean apSettings() {
+        ArchipelagoSettingsScene.instance().setConnectStatusLabel(Archipelago.getInstance().isConnected() ? "{FADE=GREEN;GREEN;0.1}Connected!" : "{FADE=RED;RED;0.1}Not Connected...");
         Forge.switchScene(ArchipelagoSettingsScene.instance());
         return true;
     }
