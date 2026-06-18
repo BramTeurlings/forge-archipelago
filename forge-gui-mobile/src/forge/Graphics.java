@@ -2310,8 +2310,8 @@ public class Graphics implements Disposable {
                 Config.instance().getSettingData().height = 2160;
                 break;
             default: // assume 720p
-                Config.instance().getSettingData().width = 720;
-                Config.instance().getSettingData().height = 1280;
+                Config.instance().getSettingData().width = 1280;
+                Config.instance().getSettingData().height = 720;
                 break;
         }
         Config.instance().saveSettings();

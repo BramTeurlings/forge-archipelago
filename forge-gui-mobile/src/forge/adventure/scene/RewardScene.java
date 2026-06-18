@@ -569,7 +569,31 @@ public class RewardScene extends UIScene {
                     lastRowXAdjust = ((numberOfColumns * cardWidth) - (lastRowCount * cardWidth)) / 2;
             }
 
-            RewardActor actor = new RewardActor(reward, type == Type.EventReward || type == Type.Loot || type == Type.QuestReward, type, type == Type.Shop && (numberOfRows > 2 || numberOfColumns > 2));
+            RewardActor actor;
+
+            if (archipelagoMode != ArchipelagoMode.disabled) {
+                boolean itemAlreadySold = false;
+                if (type == Type.Loot && reward.getType() == Reward.Type.Item && reward.getItem().equipmentSlot != null && !reward.getItem().equipmentSlot.isEmpty()) {
+                    if (archipelagoMode == ArchipelagoMode.solo_randomizer) {
+                        reward = LocalRandomizer.getInstance().takeSingleEquipmentOutOfRemainingPool();
+                    } else {
+                        ItemData itemData = new ItemData();
+                        itemData.iconName = "APIconSmall";
+                        itemData.name = "Archipelago Reward";
+                        reward = new Reward(itemData);
+                    }
+                } else if (archipelagoMode == ArchipelagoMode.networked_archipelago && type == Type.Shop && (shopActor.getName().toLowerCase().contains("equipment") || shopActor.getName().toLowerCase().contains("items"))) {
+                    // Prevent the game from removing the shop entry so we can show it as sold.
+                    skipCard = false;
+                    itemAlreadySold = reward.getItem().archipelagoAlreadyChecked;
+                }
+                actor = new RewardActor(reward, type == Type.EventReward || type == Type.Loot || type == Type.QuestReward, type, type == Type.Shop && (numberOfRows > 2 || numberOfColumns > 2));
+                if (itemAlreadySold) {
+                    actor.sold();
+                }
+            } else {
+                actor = new RewardActor(reward, type == Type.EventReward || type == Type.Loot || type == Type.QuestReward, type, type == Type.Shop && (numberOfRows > 2 || numberOfColumns > 2));
+            }
 
             actor.setBounds(lastRowXAdjust + xOff + cardWidth * (i % numberOfColumns) + spacing, yOff + cardHeight * currentRow + spacing, cardWidth - spacing * 2, cardHeight - spacing * 2);
 

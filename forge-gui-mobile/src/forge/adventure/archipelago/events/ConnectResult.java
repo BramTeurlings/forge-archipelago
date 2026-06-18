@@ -46,19 +46,11 @@ public class ConnectResult {
 //                APClient.slotData.parseStartingItems(registries);
             } catch (Exception e) {
                 e.printStackTrace();
-                if (APClient.getSlotData() != null) {
-
-                } else {
-
-                }
             }
 
-//            if (APClient.slotData.deathlink) {
-//                APClient.setDeathLinkEnabled(true);
-//            }
-
-
-            // ensure server is synced
+            if (APClient.slotData.DeathLink == 1) {
+                APClient.setDeathLinkEnabled(true);
+            }
         } else if (event.getResult() == ConnectionResult.InvalidPassword) {
             connectStatusLabel.setText("");
             connectStatusLabel.setText("{FADE=RED;RED;0.1}Invalid Password");
