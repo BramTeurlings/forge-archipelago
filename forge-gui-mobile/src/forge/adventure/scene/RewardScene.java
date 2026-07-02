@@ -16,15 +16,12 @@ import com.github.tommyettinger.textra.TextraButton;
 import com.github.tommyettinger.textra.TextraLabel;
 import com.github.tommyettinger.textra.TypingLabel;
 import forge.Forge;
-import forge.adventure.archipelago.Archipelago;
-import forge.adventure.archipelago.LocalRandomizer;
+import forge.adventure.archipelago.*;
 import forge.adventure.character.ShopActor;
 import forge.adventure.data.ArchipelagoData;
 import forge.adventure.data.ArchipelagoMode;
 import forge.haptic.HapticEngine;
 import forge.localinstance.properties.ForgePreferences.FPref;
-import forge.adventure.archipelago.ArchipelagoData;
-import forge.adventure.archipelago.ArchipelagoMode;
 import forge.adventure.data.ItemData;
 import forge.adventure.data.RewardData;
 import forge.adventure.data.ShopData;
@@ -42,7 +39,7 @@ import forge.util.ItemPool;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Displays the rewards of a fight or a treasure
@@ -685,6 +682,13 @@ public class RewardScene extends UIScene {
             price *= shopModifier;
             setText("[+GoldCoin] " + price);
             updateOwned();
+            if (rewardActor.isSold()) {
+                isSold = true;
+                setDisabled(true);
+                getColor().a = 0.5f;
+                updateBuyButtons();
+                return;
+            }
             addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -696,6 +700,7 @@ public class RewardScene extends UIScene {
                         if (ArchipelagoData.getInstance().getArchipelagoMode() == ArchipelagoMode.networked_archipelago && rewardActor.getReward().getItem() != null && rewardActor.getReward().getItem().archilepagoLocationId >= 0) {
                             ItemData itemData = rewardActor.getReward().getItem();
                             Archipelago.getInstance().checkLocation(itemData.archilepagoLocationId);
+                            ArchipelagoRandomizer.getInstance().addToBoughtColorlessEquipmentShopList(itemData);
                         } else {
                             Current.player().addReward(rewardActor.getReward());
                         }
