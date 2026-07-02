@@ -22,6 +22,7 @@ import forge.game.phase.PhaseType;
 import forge.game.zone.ZoneType;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -83,17 +84,12 @@ public class SpellAbilityVariables implements Cloneable {
     /** The gameLimitToCheck to check. */
     private String gameLimitToCheck = null;
 
-    /** The n cards in hand. */
-    private int cardsInHand = -1;
-    private int cardsInHand2 = -1;
-
     // Conditional States for Cards
     private boolean threshold = false;
     private boolean metalcraft = false;
     private boolean delirium = false;
     private boolean hellbent = false;
     private boolean revolt = false;
-    private boolean desert = false;
     private boolean blessing = false;
     private boolean solved = false;
 
@@ -116,7 +112,7 @@ public class SpellAbilityVariables implements Cloneable {
     private String playerContains = null;
 
     /** The present zone. */
-    private ZoneType presentZone = ZoneType.Battlefield;
+    private List<ZoneType> presentZones = List.of(ZoneType.Battlefield);
 
     /** The svar to check. */
     private String sVarToCheck = null;
@@ -151,9 +147,6 @@ public class SpellAbilityVariables implements Cloneable {
 
     /** The b targetsSingleTargeting */
     private boolean targetsSingleTarget = false;
-
-    /** The Presence keyword value containing the relevant condition */
-    private String presenceCondition = "";
 
     /** The class level. */
     private String classLevel = null;
@@ -315,21 +308,6 @@ public class SpellAbilityVariables implements Cloneable {
         this.gameTypes.addAll(gameTypes);
     }
 
-    /**
-     * <p>
-     * setActivateCardsInHand.
-     * </p>
-     *
-     * @param cards
-     *            a int.
-     */
-    public final void setActivateCardsInHand(final int cards) {
-        this.setCardsInHand(cards);
-    }
-    public final void setActivateCardsInHand2(final int cards) {
-        this.setCardsInHand2(cards);
-    }
-
     public final void setHellbent(final boolean bHellbent) {
         this.hellbent = bHellbent;
     }
@@ -343,7 +321,6 @@ public class SpellAbilityVariables implements Cloneable {
     public void setDelirium(boolean delirium) {  this.delirium = delirium; }
 
     public void setRevolt(final boolean bRevolt) { revolt = bRevolt; }
-    public void setDesert(final boolean bDesert) { desert = bDesert; }
     public void setBlessing(final boolean bBlessing) { blessing = bBlessing; }
     public void setSolved(final boolean bSolved) { solved = bSolved; }
 
@@ -356,6 +333,7 @@ public class SpellAbilityVariables implements Cloneable {
     protected boolean optionalBoolean = true; // Just in case you need to check if something wasn't kicked, etc
     protected boolean surgeCostPaid = false;
     protected boolean bargain = false;
+    protected boolean teamwork = false;
     protected boolean foretold = false;
 
     // IsPresent for Valid battlefield stuff
@@ -397,8 +375,8 @@ public class SpellAbilityVariables implements Cloneable {
      *
      * @return the present zone
      */
-    public final ZoneType getPresentZone() {
-        return this.presentZone;
+    public final List<ZoneType> getPresentZones() {
+        return this.presentZones;
     }
 
     /**
@@ -407,8 +385,8 @@ public class SpellAbilityVariables implements Cloneable {
      * @param presentZone
      *            the new present zone
      */
-    public final void setPresentZone(final ZoneType presentZone) {
-        this.presentZone = presentZone;
+    public final void setPresentZones(final List<ZoneType> presentZones) {
+        this.presentZones = presentZones;
     }
 
     /**
@@ -533,7 +511,6 @@ public class SpellAbilityVariables implements Cloneable {
 
     public final boolean isRevolt() {     return this.revolt;  }
 
-    public final boolean isDesert() {     return this.desert;  }
     public final boolean isBlessing() {     return this.blessing;  }
 
     public final boolean isSolved() {     return this.solved;  }
@@ -769,31 +746,6 @@ public class SpellAbilityVariables implements Cloneable {
     }
 
     /**
-     * Gets the cards in hand.
-     *
-     * @return the cardsInHand
-     */
-    public final int getCardsInHand() {
-        return this.cardsInHand;
-    }
-    public final int getCardsInHand2() {
-        return this.cardsInHand2;
-    }
-
-    /**
-     * Sets the cards in hand.
-     *
-     * @param cardsInHand0
-     *            the cardsInHand to set
-     */
-    public final void setCardsInHand(final int cardsInHand0) {
-        this.cardsInHand = cardsInHand0;
-    }
-    public final void setCardsInHand2(final int cardsInHand0) {
-        this.cardsInHand2 = cardsInHand0;
-    }
-
-    /**
      * Gets the checks if is present.
      *
      * @return the isPresent
@@ -855,20 +807,6 @@ public class SpellAbilityVariables implements Cloneable {
             System.err.println(e);
         }
         return null;
-    }
-
-    /**
-     * @return the condition from the Presence keyword, empty if keyword is absent
-     */
-    public String getPresenceCondition() {
-        return this.presenceCondition;
-    }
-
-    /**
-     * @param s the condition from the Presence keyword
-     */
-    public void setPresenceCondition(String s) {
-        this.presenceCondition = s;
     }
 
     public String getClassLevel() {

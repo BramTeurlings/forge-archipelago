@@ -65,7 +65,6 @@ import java.util.Map;
  */
 public abstract class GameStage extends Stage {
 
-
     private final OrthographicCamera camera;
     Group backgroundSprites;
     SpriteGroup foregroundSprites;
@@ -92,7 +91,6 @@ public abstract class GameStage extends Stage {
     public boolean isDialogOnlyInput() {
         return dialogOnlyInput;
     }
-
 
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
@@ -252,7 +250,6 @@ public abstract class GameStage extends Stage {
 
 
     public boolean axisMoved(Controller controller, int axisIndex, float value) {
-
         if (MapStage.getInstance().isDialogOnlyInput() || isPaused()) {
             return true;
         }
@@ -275,11 +272,7 @@ public abstract class GameStage extends Stage {
     HashMap<PlayerModification, Float> currentModifications = new HashMap<>();
 
     public void modifyPlayer(PlayerModification mod, float value) {
-        float currentValue = 0;
-        if (currentModifications.containsKey(mod)) {
-            currentValue = currentModifications.get(mod);
-        }
-        currentModifications.put(mod, currentValue + value);
+        currentModifications.merge(mod, value, Float::sum);
     }
 
     public void flyFor(float value) {
@@ -348,7 +341,6 @@ public abstract class GameStage extends Stage {
         return player;
     }
 
-
     public SpriteGroup getSpriteGroup() {
         return foregroundSprites;
     }
@@ -403,7 +395,6 @@ public abstract class GameStage extends Stage {
         }
         camera.position.x = Math.min(Math.max(Scene.getIntendedWidth() / 2f, player.pos().x), getViewport().getWorldWidth() - Scene.getIntendedWidth() / 2f);
         camera.position.y = Math.min(Math.max(Scene.getIntendedHeight() / 2f, player.pos().y), getViewport().getWorldHeight() - Scene.getIntendedHeight() / 2f);
-
 
         onActing(delta);
     }

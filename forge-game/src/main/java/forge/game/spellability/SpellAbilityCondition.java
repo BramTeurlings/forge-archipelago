@@ -88,9 +88,6 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             if (value.equals("Revolt")) {
                 this.setRevolt(true);
             }
-            if (value.equals("Desert")) {
-                this.setDesert(true);
-            }
             if (value.equals("Blessing")) {
                 this.setBlessing(true);
             }
@@ -108,6 +105,9 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             }
             if (value.equals("Bargain")) {
                 this.bargain = true;
+            }
+            if (value.equals("Teamwork")) {
+                this.teamwork = true;
             }
             if (value.equals("AltCost"))
                 this.altCostPaid = true;
@@ -157,10 +157,6 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             this.setColorToCheck(params.get("ConditionChosenColor"));
         }
 
-        if (params.containsKey("Presence")) {
-            this.setPresenceCondition(params.get("Presence"));
-        }
-
         // Condition version of IsPresent stuff
         if (params.containsKey("ConditionPresent")) {
             this.setIsPresent(params.get("ConditionPresent"));
@@ -183,7 +179,7 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
         }
 
         if (params.containsKey("ConditionZone")) {
-            this.setPresentZone(ZoneType.smartValueOf(params.get("ConditionZone")));
+            this.setPresentZones(ZoneType.listValueOf(params.get("ConditionZone")));
         }
 
         if (params.containsKey("ConditionPlayerDefined")) {
@@ -269,7 +265,6 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
         if (this.isMetalcraft() && !activator.hasMetalcraft()) return false;
         if (this.isDelirium() && !activator.hasDelirium()) return false;
         if (this.isRevolt() && !activator.hasRevolt()) return false;
-        if (this.isDesert() && !activator.hasDesert()) return false;
         if (this.isBlessing() && !activator.hasBlessing()) return false;
 
         if (this.kicked && !sa.isKicked()) return false;
@@ -279,23 +274,10 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
         if (this.surgeCostPaid && !sa.isSurged()) return false;
         if (this.bargain && !sa.isBargained()) return false;
         if (this.foretold && !sa.isForetold()) return false;
+        if (this.teamwork && !sa.isTeamwork()) return false;
 
         if (this.optionalCostPaid && this.optionalBoolean && !sa.isOptionalCostPaid(OptionalCost.Generic)) return false;
         if (this.optionalCostPaid && !this.optionalBoolean && sa.isOptionalCostPaid(OptionalCost.Generic)) return false;
-        
-        if (!this.getPresenceCondition().isEmpty()) {
-            if (host.getCastFrom() == null || host.getCastSA() == null)
-                return false;
-
-            final String type = this.getPresenceCondition();
-
-            int revealed = AbilityUtils.calculateAmount(host, "Revealed$Valid " + type, host.getCastSA());
-            int ctrl = AbilityUtils.calculateAmount(host, "Count$LastStateBattlefield " + type + ".YouCtrl", host.getCastSA());
-
-            if (revealed + ctrl == 0) {
-                return false;
-            }
-        }
 
         if (this.getNoDifferentColors() != null) {
             List<Card> tgts = AbilityUtils.getDefinedCards(host, this.getNoDifferentColors(), sa);
@@ -353,13 +335,6 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             }
         }
 
-        if (this.getCardsInHand() != -1) {
-            // Can handle Library of Alexandria, or Hellbent
-            if (activator.getCardsIn(ZoneType.Hand).size() != this.getCardsInHand()) {
-                return false;
-            }
-        }
-
         if (this.getColorToCheck() != null) {
             if (!host.hasChosenColor(this.getColorToCheck())) {
                 return false;
@@ -371,18 +346,15 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             if (getPresentDefined() != null) {
                 list = AbilityUtils.getDefinedObjects(host, getPresentDefined(), sa);
             } else {
-                boolean usedLastState = false;
-                if (sa.isReplacementAbility()) {
-                    if (getPresentZone().equals(ZoneType.Battlefield)) {
-                        list = new FCollection<>(sa.getRootAbility().getLastStateBattlefield());
-                        usedLastState = true;
-                    } else if (getPresentZone().equals(ZoneType.Graveyard)) {
-                        list = new FCollection<>(sa.getRootAbility().getLastStateGraveyard());
-                        usedLastState = true;
+                list = new FCollection<>();
+                for (final ZoneType zone : getPresentZones()) {
+                    if (!sa.isReplacementAbility() || !zone.equals(ZoneType.Battlefield) || !zone.equals(ZoneType.Graveyard)) {
+                        list.addAll(game.getCardsIn(zone));
+                    } else if (zone.equals(ZoneType.Battlefield)) {
+                        list.addAll(sa.getRootAbility().getLastStateBattlefield());
+                    } else if (zone.equals(ZoneType.Graveyard)) {
+                        list.addAll(sa.getRootAbility().getLastStateGraveyard());
                     }
-                }
-                if (!usedLastState) {
-                    list = new FCollection<>(game.getCardsIn(getPresentZone()));
                 }
             }
 
@@ -402,19 +374,15 @@ public class SpellAbilityCondition extends SpellAbilityVariables {
             if (getPresentDefined2() != null) {
                 list = AbilityUtils.getDefinedObjects(host, getPresentDefined2(), sa);
             } else {
-                boolean usedLastState = false;
-                if (sa.isReplacementAbility()) {
-                    //for now, we will always look in the same zone as the other present
-                    if (getPresentZone().equals(ZoneType.Battlefield)) {
-                        list = new FCollection<>(sa.getRootAbility().getLastStateBattlefield());
-                        usedLastState = true;
-                    } else if (getPresentZone().equals(ZoneType.Graveyard)) {
-                        list = new FCollection<>(sa.getRootAbility().getLastStateGraveyard());
-                        usedLastState = true;
+                list = new FCollection<>();
+                for (final ZoneType zone : getPresentZones()) {
+                    if (!sa.isReplacementAbility() || !zone.equals(ZoneType.Battlefield) || !zone.equals(ZoneType.Graveyard)) {
+                        list.addAll(game.getCardsIn(zone));
+                    } else if (zone.equals(ZoneType.Battlefield)) {
+                        list.addAll(sa.getRootAbility().getLastStateBattlefield());
+                    } else if (zone.equals(ZoneType.Graveyard)) {
+                        list.addAll(sa.getRootAbility().getLastStateGraveyard());
                     }
-                }
-                if (!usedLastState) {
-                    list = new FCollection<>(game.getCardsIn(getPresentZone()));
                 }
             }
 

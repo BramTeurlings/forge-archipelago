@@ -158,7 +158,7 @@ public class StaticAbility extends CardTraitBase implements IIdentifiable, Clone
             layers.add(StaticAbilityLayer.COLOR);
         }
 
-        if (hasParam("RemoveAllAbilities") || hasParam("GainsAbilitiesOf")
+        if (hasParam("RemoveAllAbilities") || hasParam("RemoveNonManaAbilities") || hasParam("GainsAbilitiesOf")
                 || hasParam("GainsAbilitiesOfDefined") || hasParam("GainsTriggerAbsOf")
                 || hasParam("AddKeyword") || hasParam("AddAbility")
                 || hasParam("AddTrigger") || hasParam("AddReplacementEffect")
@@ -375,7 +375,6 @@ public class StaticAbility extends CardTraitBase implements IIdentifiable, Clone
             if (condition.equals("Metalcraft") && !controller.hasMetalcraft()) return false;
             if (condition.equals("Delirium") && !controller.hasDelirium()) return false;
             if (condition.equals("Ferocious") && !controller.hasFerocious()) return false;
-            if (condition.equals("Desert") && !controller.hasDesert()) return false;
             if (condition.equals("Blessing") && !controller.hasBlessing()) return false;
             if (condition.equals("Monarch") & !controller.isMonarch()) return false;
             if (condition.equals("Night") & !game.isNight()) return false;
@@ -424,7 +423,7 @@ public class StaticAbility extends CardTraitBase implements IIdentifiable, Clone
         }
 
         if (hasParam("IsPresent")) {
-            final ZoneType zone = hasParam("PresentZone") ? ZoneType.valueOf(getParam("PresentZone")) : ZoneType.Battlefield;
+            final List<ZoneType> zone = hasParam("PresentZone") ? ZoneType.listValueOf(getParam("PresentZone")) : List.of(ZoneType.Battlefield);
             final String compare = getParamOrDefault("PresentCompare", "GE1");
             CardCollectionView list = game.getCardsIn(zone);
             final String present = getParam("IsPresent");
@@ -448,20 +447,6 @@ public class StaticAbility extends CardTraitBase implements IIdentifiable, Clone
                 isRelevantStage |= (game.getAge() == GameStage.valueOf(stage));
             }
             return isRelevantStage;
-        }
-
-        if (hasParam("Presence")) {
-            if (hostCard.getCastFrom() == null || hostCard.getCastSA() == null)
-                return false;
-
-            final String type = getParam("Presence");
-
-            int revealed = AbilityUtils.calculateAmount(hostCard, "Revealed$Valid " + type, hostCard.getCastSA());
-            int ctrl = AbilityUtils.calculateAmount(hostCard, "Count$LastStateBattlefield " + type + ".YouCtrl", hostCard.getCastSA());
-
-            if (revealed + ctrl == 0) {
-                return false;
-            }
         }
 
         if (hasParam("ClassLevel")) {
@@ -631,8 +616,4 @@ public class StaticAbility extends CardTraitBase implements IIdentifiable, Clone
         return clone;
     }
 
-    @Override
-    public List<Object> getTriggerRemembered() {
-        return ImmutableList.of();
-    }
 }
