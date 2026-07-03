@@ -39,7 +39,6 @@ import forge.util.ItemPool;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Set;
 
 /**
  * Displays the rewards of a fight or a treasure
@@ -700,7 +699,7 @@ public class RewardScene extends UIScene {
                         if (ArchipelagoData.getInstance().getArchipelagoMode() == ArchipelagoMode.networked_archipelago && rewardActor.getReward().getItem() != null && rewardActor.getReward().getItem().archilepagoLocationId >= 0) {
                             ItemData itemData = rewardActor.getReward().getItem();
                             Archipelago.getInstance().checkLocation(itemData.archilepagoLocationId);
-                            ArchipelagoRandomizer.getInstance().addToBoughtColorlessEquipmentShopList(itemData);
+                            itemData.archipelagoAlreadyChecked = true;
                         } else {
                             Current.player().addReward(rewardActor.getReward());
                         }
