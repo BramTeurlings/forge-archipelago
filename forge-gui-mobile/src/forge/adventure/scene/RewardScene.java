@@ -349,6 +349,7 @@ public class RewardScene extends UIScene {
 
     public void loadRewards(Array<Reward> newRewards, Type type, ShopActor shopActor) {
         // Merge Gold and Shards rewards into single entries
+        ArchipelagoMode archipelagoMode = ArchipelagoData.getInstance().getArchipelagoMode();
         int totalGold = 0;
         int totalShards = 0;
         Array<Reward> others = new Array<>();
@@ -367,6 +368,9 @@ public class RewardScene extends UIScene {
         }
         newRewards.clear();
         if (totalGold > 0) {
+            if (archipelagoMode == ArchipelagoMode.networked_archipelago && ArchipelagoRandomizer.getInstance().getSlotData() != null) {
+                totalGold = Math.round(totalGold * (ArchipelagoRandomizer.getInstance().getSlotData().GoldMultiplierPercentage / 100f));
+            }
             newRewards.add(new Reward(Reward.Type.Gold, totalGold));
         }
         if (totalShards > 0) {
