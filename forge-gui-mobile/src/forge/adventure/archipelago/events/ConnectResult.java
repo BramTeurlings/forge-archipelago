@@ -26,6 +26,14 @@ public class ConnectResult {
         if (event.getResult() == ConnectionResult.Success) {
             try {
                 ArchipelagoRandomizer APRandomizer = ArchipelagoRandomizer.getInstance();
+
+                if (APRandomizer.getSlotData() != null && !APRandomizer.getSlotData().Seed.equals(event.getSlotData(SlotData.class).Seed)) {
+                    APClient.disconnect();
+                    connectStatusLabel.setText("");
+                    connectStatusLabel.setText("{FADE=PURPLE;PURPLE;0.1}Seed Mismatch");
+                    return;
+                }
+
                 APRandomizer.setLastIp(ArchipelagoSettingsScene.instance().getIpTextField());
                 APRandomizer.setLastPort(ArchipelagoSettingsScene.instance().getPortTextField());
                 APRandomizer.setLastSlotName(ArchipelagoSettingsScene.instance().getSlotNameTextField());
@@ -48,9 +56,10 @@ public class ConnectResult {
                 e.printStackTrace();
             }
 
-            if (APClient.slotData.DeathLink == 1) {
-                APClient.setDeathLinkEnabled(true);
-            }
+            // deathlink currently not supported, commenting this out for now.
+//            if (APClient.slotData.DeathLink == 1) {
+//                APClient.setDeathLinkEnabled(true);
+//            }
         } else if (event.getResult() == ConnectionResult.InvalidPassword) {
             connectStatusLabel.setText("");
             connectStatusLabel.setText("{FADE=RED;RED;0.1}Invalid Password");
