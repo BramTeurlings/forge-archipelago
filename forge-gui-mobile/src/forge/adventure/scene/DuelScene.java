@@ -10,6 +10,7 @@ import forge.Forge;
 import forge.Graphics;
 import forge.LobbyPlayer;
 import forge.adventure.archipelago.ArchipelagoData;
+import forge.adventure.archipelago.ArchipelagoMode;
 import forge.card.CardRenderer;
 import forge.card.CardRenderer.CardStackPosition;
 import forge.card.CardZoom;
