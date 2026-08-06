@@ -24,7 +24,7 @@ public class ArchipelagoData implements SaveFileContent {
     private final CardEdition.Collection allEditions = StaticData.instance().getEditions();
     private final Iterable<CardEdition> allOrderedEditions = allEditions.getOrderedEditions();
     // Todo: This works fine for singleplayer even when updates come out but the fact that the list of all sets can grow will cause problems in Archipelago due to a variable amount of checks.
-    private final Set<String> colorSetsByName = new HashSet<>(Arrays.asList("White", "Black", "Blue", "Red", "Green"));
+    private final Set<String> COLOR_SET_NAMES = ArchipelagoUtil.COLOR_SET_NAMES;
     protected final Set<String> allCardSets = new HashSet<>();
     // List of teleportation runes that we use to gate regions
     protected final Set<String> regionTeleportingRunes = new HashSet<>(Arrays.asList("white rune", "black rune", "blue rune", "red rune", "green rune"));
@@ -92,8 +92,7 @@ public class ArchipelagoData implements SaveFileContent {
         this.addCardUnlockedByName("Wastes");
 
         setsUnlockedByCode.clear();
-        this.setsUnlockedByCode.addAll(colorSetsByName);
-
+        this.setsUnlockedByCode.addAll(COLOR_SET_NAMES);
 
         colorlessCompletedTownInnEvents.clear();
         whiteCompletedTownInnEvents.clear();
