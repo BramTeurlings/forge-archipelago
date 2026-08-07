@@ -64,7 +64,6 @@ public class PaperCard implements Comparable<IPaperCard>, InventoryItemFromSet, 
     private transient String displayName;
     private transient String sortableName;
     private transient boolean hasFlavorName;
-    private transient boolean isLocked;
 
     @Override
     public String getName() {
