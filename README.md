@@ -52,7 +52,7 @@ Embark on a thrilling single-player journey where you can:
 
 <img width="1282" height="752" alt="Shandalar World" src="https://github.com/user-attachments/assets/9af31471-d688-442f-9418-9807d8635b72" />
 
-### 🔍 Quest Modes
+### 🔍 Quest Mode
 Engage in focused gameplay without the overworld exploration—perfect for quick sessions!
 
 <img width="1282" height="752" alt="Quest Duels" src="https://github.com/user-attachments/assets/b9613b1c-e8c3-4320-8044-6922c519aad4" />

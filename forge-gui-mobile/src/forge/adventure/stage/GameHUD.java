@@ -1190,4 +1190,14 @@ public class GameHUD extends Stage {
     public void setApButtonVisibility(boolean visible) {
         apSettingsActor.setVisible(visible);
     }
+
+    public Batch getBatch() {
+        return gameStage.getBatch();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+
 }
