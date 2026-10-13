@@ -46,12 +46,21 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("serial")
 public class Deck extends DeckBase implements Iterable<Entry<DeckSection, CardPool>> {
+    // Pinned to the computed UID from before sleeveArtKey/sleeveArtOffset were added, so decks
+    // serialized into Adventure saves by older builds keep deserializing (new fields default).
+    private static final long serialVersionUID = -8539667316828440829L;
+
+    // Crop offset (0..1000 along the slack axis) used when framing this deck's card-art sleeve
+    public static final int DEFAULT_SLEEVE_OFFSET = 500;
+
     private final Map<DeckSection, CardPool> parts = new EnumMap<>(DeckSection.class);
     private final Set<String> tags = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     // Supports deferring loading a deck until we actually need its contents. This works in conjunction with
     // the lazy card load feature to ensure we don't need to load all cards on start up.
     private final Set<String> aiHints = new TreeSet<>();
     private final List<String> keyCards = new ArrayList<>();
+    // Officially suggested alternate commanders (card names), in the order they should be offered
+    private final List<String> altCommanders = new ArrayList<>();
     private final Map<String, String> draftNotes = new HashMap<>();
     private Map<String, List<String>> deferredSections = null;
     private Map<String, List<String>> loadedSections = null;
@@ -60,6 +69,8 @@ public class Deck extends DeckBase implements Iterable<Entry<DeckSection, CardPo
     private String lastCardArtPreferenceUsed = "";
     private Boolean lastCardArtOptimisationOptionUsed = null;
     private boolean includeCardsFromUnspecifiedSet = false;
+    private String sleeveArtKey = "";
+    private int sleeveArtOffset = DEFAULT_SLEEVE_OFFSET;
     private transient UnplayableAICards unplayableAI = null;
 
     public Deck() {
@@ -262,6 +273,11 @@ public class Deck extends DeckBase implements Iterable<Entry<DeckSection, CardPo
             result.tags.addAll(this.tags);
         if(keyCards != null)
             result.keyCards.addAll(this.keyCards);
+        //noinspection ConstantValue
+        if(altCommanders != null) //Can happen deserializing old Decks.
+            result.altCommanders.addAll(this.altCommanders);
+        result.sleeveArtKey = this.sleeveArtKey;
+        result.sleeveArtOffset = this.sleeveArtOffset;
     }
 
     /*
@@ -573,6 +589,22 @@ public class Deck extends DeckBase implements Iterable<Entry<DeckSection, CardPo
         return sum;
     }
 
+    /** Card image key whose art_crop is this deck's sleeve, or "" to use the built-in sleeve. */
+    public String getSleeveArtKey() {
+        // null when deserialized from a stream written before this field existed
+        return sleeveArtKey == null ? "" : sleeveArtKey;
+    }
+    public void setSleeveArtKey(final String key) {
+        sleeveArtKey = key == null ? "" : key;
+    }
+
+    public int getSleeveArtOffset() {
+        return sleeveArtOffset;
+    }
+    public void setSleeveArtOffset(final int offset) {
+        sleeveArtOffset = offset;
+    }
+
     public List<String> getKeyCards() {
         return new ArrayList<>(keyCards);
     }
@@ -597,6 +629,20 @@ public class Deck extends DeckBase implements Iterable<Entry<DeckSection, CardPo
             return false;
         }
         return keyCards.contains(cardName.trim());
+    }
+
+    public List<String> getAltCommanders() {
+        //noinspection ConstantValue
+        return altCommanders == null ? new ArrayList<>() : new ArrayList<>(altCommanders);
+    }
+
+    public void addAltCommander(String cardName) {
+        if (cardName != null && !cardName.trim().isEmpty()) {
+            String trimmed = cardName.trim();
+            if (!altCommanders.contains(trimmed)) {
+                altCommanders.add(trimmed);
+            }
+        }
     }
 
     public void setDraftNotes(Map<String, String> draftNotes) {
