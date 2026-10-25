@@ -72,6 +72,11 @@ public class DuelScene extends ForgeScene {
         return object;
     }
 
+    // Used to determine if a game is currently being hosted in this scene.
+    public HostedMatch getHostedMatch() {
+        return hostedMatch;
+    }
+
     //GameLobby lobby;
     HostedMatch hostedMatch;
     EnemySprite enemy;
@@ -197,6 +202,7 @@ public class DuelScene extends ForgeScene {
         Current.player().clearBlessing();
 
         boolean finalWinner = winner;
+        ArchipelagoData.getInstance().onBattleEnded(finalWinner, enemyName);
         boolean isBossLoss = (chaosBattle || showMessages) && !finalWinner;
         boolean hasAnteResults = !anteWonCards.isEmpty() || !anteLostCards.isEmpty();
 
