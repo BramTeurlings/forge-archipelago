@@ -257,13 +257,18 @@ public class ArchipelagoRandomizer {
         Deck deck = player.getSelectedDeck();
         boolean noStartingDeck = slotData.NoStartingDeck == 1;
         if (noStartingDeck) {
-            for (DeckSection section : List.of(DeckSection.Main, DeckSection.Sideboard)) {
-                CardPool cards = deck.get(section);
-                if (cards == null) continue;
-                for (Map.Entry<PaperCard, Integer> entry : cards) {
-                    player.getCards().remove(entry.getKey(), entry.getValue());
+            // Remove the entire collection on first connect and lock those cards.
+            // Happens before any cards can be earned so it will only delete the starting cards.
+            for (PaperCard card : player.getCards().toFlatList()) {
+                if (!card.getRules().getType().isBasicLand()) archipelagoDataInstance.cardsUnlockedByName.remove(card.getCardName());
+            }
+            player.getCards().clear();
+            player.newCards.clear();
+            for (int i = 0; i < player.getDeckCount(); i++) {
+                for (DeckSection section : List.of(DeckSection.Main, DeckSection.Sideboard)) {
+                    CardPool cards = player.getDeck(i).get(section);
+                    if (cards != null) cards.clear();
                 }
-                cards.clear();
             }
         }
 
