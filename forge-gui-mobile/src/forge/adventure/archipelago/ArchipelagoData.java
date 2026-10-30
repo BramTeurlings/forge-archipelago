@@ -305,6 +305,13 @@ public class ArchipelagoData implements SaveFileContent {
     // Todo: Make the functions below private where possible, rewrite other code to account for this.
     // Todo: Make sure the functions below trigger all related checks in `updatePlayerChecks` when applicable.
 
+    // Whether beating a miniboss in an inn event, tournament or arena battle should give a check, off by default.
+    public boolean countsEventMinibosses() {
+        if (archipelagoMode != ArchipelagoMode.networked_archipelago) return false;
+        SlotData slotData = ArchipelagoRandomizer.getInstance().getSlotData();
+        return slotData != null && slotData.EventMinibossChecks == 1;
+    }
+
     /**
      * Records a miniboss defeat and sends its check.
      * Returns true if this name wasn't recorded as defeated before.

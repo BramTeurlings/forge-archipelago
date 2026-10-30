@@ -59,6 +59,8 @@ public class SlotData implements Serializable {
     public int NoStartingDeck;
     @SerializedName("auto_sell_deck")
     public int AutoSellDeck;
+    @SerializedName("event_miniboss_checks")
+    public int EventMinibossChecks;
     // Starting inventory (null for slots generated before APWorld 0.2.0)
     @SerializedName("starting_cards")
     public HashMap<String, Integer> StartingCards; // card name -> amount
